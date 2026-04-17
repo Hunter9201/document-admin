@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Pleadings Vault | Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 24px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #0a2b3e, #1e4a6e);
+            color: white;
+            padding: 20px 28px;
+            border-radius: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .logo p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .token-status {
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 28px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-header {
+            padding: 18px 24px;
+            background: #fefcf7;
+            border-bottom: 1px solid #e9e5df;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #1e4a6e;
+            box-shadow: 0 0 0 3px rgba(30,74,110,0.1);
+        }
+        button {
+            background: #1e4a6e;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        button:hover {
+            background: #0f3550;
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+        }
+        .btn-outline:hover {
+            background: #f8fafc;
+        }
+        .btn-danger {
+            background: #b91c1c;
+        }
+        .btn-danger:hover {
+            background: #991b1b;
+        }
+        .btn-success {
+            background: #2b6e3c;
+        }
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 20px;
+            padding: 32px 20px;
+            text-align: center;
+            background: #faf9f6;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 20px;
+        }
+        .upload-area:hover {
+            border-color: #1e4a6e;
+            background: #f1f5f9;
+        }
+        .files-list {
+            margin-top: 20px;
+        }
+        .file-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid #1e4a6e;
+        }
+        .file-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .badge {
+            background: #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .doc-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .doc-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 12px;
+            transition: 0.1s;
+        }
+        .doc-item:hover {
+            background: #fefcf7;
+        }
+        .status-msg {
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: #2c6e2f;
+        }
+        hr {
+            margin: 16px 0;
+        }
+        @media (max-width: 900px) {
+            .grid-2col { grid-template-columns: 1fr; }
+        }
+        .pages-status {
+            font-size: 0.7rem;
+            margin-top: 6px;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="admin-header">
+        <div class="logo">
+            <h1><i class="fas fa-gavel"></i> Pleadings Vault · Admin</h1>
+            <p>Manage notices of motion, affidavits, chamber summons, petitions, eviction notices & more</p>
+        </div>
+        <div class="token-status">
+            <span id="tokenIndicator" class="badge" style="background:#cbd5e1;">⚙️ No token</span>
+            <button id="showTokenModalBtn" class="btn-outline" style="background: rgba(255,255,255,0.2); color:white;"><i class="fas fa-key"></i> Set Token</button>
+            <button id="clearTokenBtn" class="btn-outline" style="background: rgba(255,255,255,0.1);"><i class="fas fa-trash"></i> Clear</button>
+        </div>
+    </div>
+
+    <!-- Token Modal -->
+    <div id="tokenModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:1000;">
+        <div style="background:white; max-width:460px; width:90%; border-radius:28px; padding:24px;">
+            <h3><i class="fab fa-github"></i> GitHub Personal Access Token</h3>
+            <p class="pages-status">Fine-grained token with <strong>repo</strong> + <strong>workflow</strong> scopes.</p>
+            <input type="text" id="tokenInput" placeholder="github_pat_xxx..." style="width:100%; margin:12px 0;">
+            <div style="display:flex; gap:12px; justify-content:flex-end;">
+                <button id="cancelTokenBtn" class="btn-outline">Cancel</button>
+                <button id="saveTokenBtn" class="btn-success">Save Token</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2col">
+        <!-- LEFT: UPLOAD + METADATA -->
+        <div class="card">
+            <div class="card-header">
+                <span><i class="fas fa-upload"></i> Upload Pleadings & Motions</span>
+                <span id="uploadCountBadge" class="badge">0 files</span>
+            </div>
+            <div class="card-body">
+                <!-- Repository config – default JSON file is "pleadings.json" (separate from any other docs) -->
+                <div class="form-row">
+                    <div class="form-group"><label>GitHub Owner</label><input id="cfgOwner" placeholder="hunter9201"></div>
+                    <div class="form-group"><label>Repository</label><input id="cfgRepo" placeholder="advocate"></div>
+                    <div class="form-group"><label>Branch</label><input id="cfgBranch" placeholder="main"></div>
+                    <div class="form-group"><label>JSON path (pleadings)</label><input id="cfgDocuments" placeholder="pleadings.json"></div>
+                </div>
+
+                <!-- Drop zone -->
+                <div id="uploadArea" class="upload-area">
+                    <i class="fas fa-file-pdf" style="font-size: 2rem; color:#1e4a6e;"></i>
+                    <p><strong>Click or drag PDF files</strong> (pleadings, affidavits, motions, etc.)</p>
+                    <p class="pages-status">Max 8 files · 40MB each</p>
+                    <input type="file" id="fileInput" multiple accept=".pdf" style="display:none">
+                </div>
+
+                <!-- Dynamic metadata per file -->
+                <div id="metadataContainer" style="display:none;">
+                    <hr>
+                    <h4><i class="fas fa-pen-alt"></i> Document Metadata (per file)</h4>
+                    <div id="fileMetaList"></div>
+                </div>
+
+                <!-- Auto publish & actions -->
+                <div style="margin: 20px 0 12px;">
+                    <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="autoPublishCheck" checked> <span>Auto-publish to GitHub Pages after upload</span></label>
+                </div>
+                <div class="flex-between">
+                    <button id="publishBtn" class="btn-success"><i class="fas fa-cloud-upload-alt"></i> Upload to GitHub</button>
+                    <button id="resetUploadBtn" class="btn-outline"><i class="fas fa-undo-alt"></i> Clear selection</button>
+                </div>
+                <div id="uploadStatus" class="status-msg"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT: MANAGE DOCUMENTS -->
+        <div class="card">
+            <div class="card-header">
+                <span><i class="fas fa-database"></i> Pleadings Library</span>
+                <button id="refreshListBtn" class="btn-outline" style="padding:4px 12px;"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+            <div class="card-body">
+                <div class="flex-between" style="margin-bottom: 12px;">
+                    <span><strong id="docCount">0</strong> documents</span>
+                    <div>
+                        <button id="exportJsonBtn" class="btn-outline" style="margin-right:6px;"><i class="fas fa-download"></i> Export</button>
+                        <button id="importJsonBtn" class="btn-outline"><i class="fas fa-upload"></i> Import</button>
+                        <input type="file" id="importFileInput" accept="application/json" style="display:none">
+                    </div>
+                </div>
+                <div id="documentsList" class="doc-list">
+                    <div class="status-msg"><i class="fas fa-spinner fa-pulse"></i> Loading pleadings...</div>
+                </div>
+                <hr>
+                <div class="flex-between">
+                    <span><i class="fab fa-github"></i> GitHub Pages</span>
+                    <button id="triggerPagesBtn" class="btn-outline"><i class="fas fa-rocket"></i> Trigger Deploy</button>
+                </div>
+                <div id="pagesStatusMsg" class="pages-status">Not checked</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // -------------------------------------------------------------
+    // STANDALONE ADMIN PANEL FOR PLEADINGS
+    // Uses ITS OWN data file: "pleadings.json" (configurable)
+    // Fully independent from any other documents.json
+    // -------------------------------------------------------------
+    const cfgOwner = document.getElementById('cfgOwner');
+    const cfgRepo = document.getElementById('cfgRepo');
+    const cfgBranch = document.getElementById('cfgBranch');
+    const cfgDocuments = document.getElementById('cfgDocuments');
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const metadataContainer = document.getElementById('metadataContainer');
+    const fileMetaList = document.getElementById('fileMetaList');
+    const publishBtn = document.getElementById('publishBtn');
+    const resetUploadBtn = document.getElementById('resetUploadBtn');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const refreshListBtn = document.getElementById('refreshListBtn');
+    const documentsList = document.getElementById('documentsList');
+    const docCountSpan = document.getElementById('docCount');
+    const exportJsonBtn = document.getElementById('exportJsonBtn');
+    const importJsonBtn = document.getElementById('importJsonBtn');
+    const importFileInput = document.getElementById('importFileInput');
+    const triggerPagesBtn = document.getElementById('triggerPagesBtn');
+    const pagesStatusMsg = document.getElementById('pagesStatusMsg');
+    const autoPublishCheck = document.getElementById('autoPublishCheck');
+    const uploadCountBadge = document.getElementById('uploadCountBadge');
+    const tokenIndicator = document.getElementById('tokenIndicator');
+    const showTokenModalBtn = document.getElementById('showTokenModalBtn');
+    const clearTokenBtn = document.getElementById('clearTokenBtn');
+    const tokenModal = document.getElementById('tokenModal');
+    const tokenInput = document.getElementById('tokenInput');
+    const cancelTokenBtn = document.getElementById('cancelTokenBtn');
+    const saveTokenBtn = document.getElementById('saveTokenBtn');
+
+    // Document types for pleadings
+    const DOCUMENT_TYPES = [
+        "Notice of Motion", "Affidavit", "Chamber Summons", "Petition", 
+        "Transfer Form", "Eviction Notice", "Draft Pleading", "Memorandum of Appeal",
+        "Witness Statement", "Written Submission", "Summons to Enter Appearance", "Decree"
+    ];
+
+    // Storage keys
+    const STORAGE_TOKEN = "PLEADINGS_GH_TOKEN";
+    const STORAGE_CFG = "PLEADINGS_ADMIN_CFG";
+    const SESSION_KEY = "PLEADINGS_SESSION";
+    const AUTO_PUBLISH_KEY = "PLEADINGS_AUTO";
+
+    let selectedFiles = []; // { file, metadata }
+    let editingDocId = null;
+    let allDocuments = [];
+
+    function getStorage() { return sessionStorage.getItem(SESSION_KEY) === '1' ? sessionStorage : localStorage; }
+    function getToken() { return getStorage().getItem(STORAGE_TOKEN) || ""; }
+    function setToken(t) { getStorage().setItem(STORAGE_TOKEN, t); updateTokenUI(); }
+    function clearTokenStorage() { localStorage.removeItem(STORAGE_TOKEN); sessionStorage.removeItem(STORAGE_TOKEN); sessionStorage.removeItem(SESSION_KEY); updateTokenUI(); }
+    function updateTokenUI() { const t = getToken(); tokenIndicator.innerText = t ? "🔑 Token set" : "⚠️ No token"; tokenIndicator.style.background = t ? "#dcfce7" : "#f1f5f9"; }
+    
+    function getAutoPublish() { return localStorage.getItem(AUTO_PUBLISH_KEY) !== 'false'; }
+    function setAutoPublish(val) { localStorage.setItem(AUTO_PUBLISH_KEY, val); }
+    autoPublishCheck.checked = getAutoPublish();
+    autoPublishCheck.addEventListener('change', (e) => setAutoPublish(e.target.checked));
+
+    function loadConfig() {
+        try {
+            const saved = localStorage.getItem(STORAGE_CFG);
+            if (saved) {
+                const cfg = JSON.parse(saved);
+                cfgOwner.value = cfg.owner || "hunter9201";
+                cfgRepo.value = cfg.repo || "advocate";
+                cfgBranch.value = cfg.branch || "main";
+                cfgDocuments.value = cfg.documentsPath || "pleadings.json";
+            } else {
+                cfgOwner.value = "hunter9201";
+                cfgRepo.value = "advocate";
+                cfgBranch.value = "main";
+                cfgDocuments.value = "pleadings.json";   // separate file
+            }
+        } catch(e) {}
+    }
+    function saveConfig() {
+        const cfg = {
+            owner: cfgOwner.value.trim(),
+            repo: cfgRepo.value.trim(),
+            branch: cfgBranch.value.trim(),
+            documentsPath: cfgDocuments.value.trim() || "pleadings.json"
+        };
+        localStorage.setItem(STORAGE_CFG, JSON.stringify(cfg));
+    }
+    function currentCfg() {
+        return {
+            owner: cfgOwner.value.trim() || "hunter9201",
+            repo: cfgRepo.value.trim() || "advocate",
+            branch: cfgBranch.value.trim() || "main",
+            documentsPath: cfgDocuments.value.trim() || "pleadings.json"
+        };
+    }
+
+    // GitHub helpers
+    function ghHeaders() {
+        const h = { "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+        const t = getToken();
+        if (t) h["Authorization"] = "Bearer " + t;
+        return h;
+    }
+    async function ghGetContents(path, cfg) {
+        const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}?ref=${cfg.branch}`;
+        const res = await fetch(url, { headers: ghHeaders() });
+        if (res.status === 404) return { status: 404 };
+        if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`);
+        return res.json();
+    }
+    async function ghPutContents(path, base64Content, message, sha = null, cfg) {
+        const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}`;
+        const body = { message, content: base64Content, branch: cfg.branch };
+        if (sha) body.sha = sha;
+        const res = await fetch(url, { method: "PUT", headers: { ...ghHeaders(), "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error(`PUT ${path} failed: ${res.status}`);
+        return res.json();
+    }
+    async function uploadPDF(file, filename, message, cfg) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = async () => {
+                try {
+                    const base64 = btoa(new Uint8Array(reader.result).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+                    let sha = null;
+                    try { const existing = await ghGetContents(filename, cfg); if (existing.sha) sha = existing.sha; } catch(e) {}
+                    const res = await ghPutContents(filename, base64, message, sha, cfg);
+                    resolve(res);
+                } catch (e) { reject(e); }
+            };
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(file);
+        });
+    }
+    function toBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
+    function fromBase64(b64) { return decodeURIComponent(escape(atob(b64))); }
+
+    // Load pleadings.json
+    async function loadDocuments() {
+        try {
+            const cfg = currentCfg();
+            const got = await ghGetContents(cfg.documentsPath, cfg);
+            if (got.status === 404) return { arr: [], sha: null };
+            const arr = JSON.parse(fromBase64(got.content));
+            if (!Array.isArray(arr)) return { arr: [], sha: got.sha };
+            return { arr, sha: got.sha };
+        } catch (err) {
+            console.error(err);
+            return { arr: [], sha: null };
+        }
+    }
+
+    async function refreshDocumentsList() {
+        try {
+            const { arr } = await loadDocuments();
+            allDocuments = arr;
+            renderDocumentList(arr);
+            docCountSpan.innerText = arr.length;
+        } catch (e) {
+            documentsList.innerHTML = `<div class="status-msg"><i class="fas fa-exclamation-triangle"></i> Error: ${e.message}</div>`;
+        }
+    }
+
+    function renderDocumentList(docs) {
+        if (!docs.length) {
+            documentsList.innerHTML = `<div class="status-msg">📭 No pleadings uploaded yet. Use the upload form.</div>`;
+            return;
+        }
+        documentsList.innerHTML = '';
+        docs.forEach(doc => {
+            const div = document.createElement('div');
+            div.className = 'doc-item';
+            div.innerHTML = `
+                <div class="flex-between">
+                    <strong><i class="fas fa-file-pdf"></i> ${escapeHtml(doc.title)}</strong>
+                    <span class="badge">${doc.documentType || 'Pleading'}</span>
+                </div>
+                <div style="font-size:0.75rem; color:#475569; margin: 6px 0;">
+                    ${doc.caseNumber ? `📁 Case: ${escapeHtml(doc.caseNumber)}` : ''} 
+                    ${doc.parties ? `· ⚖️ ${escapeHtml(doc.parties)}` : ''}
+                    ${doc.court ? `· 🏛️ ${escapeHtml(doc.court)}` : ''}
+                </div>
+                <div style="font-size:0.7rem; margin-top:6px;">📅 ${doc.documentDate || '—'} · 📄 ${doc.filename} · ${doc.size}MB</div>
+                <div class="flex-between" style="margin-top: 10px;">
+                    <button class="edit-doc btn-outline" data-id="${doc.id}" style="padding:4px 12px;">✏️ Edit</button>
+                    <button class="delete-doc btn-danger" data-id="${doc.id}" style="padding:4px 12px;">🗑️ Delete</button>
+                </div>
+            `;
+            documentsList.appendChild(div);
+        });
+        document.querySelectorAll('.edit-doc').forEach(btn => {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); startEdit(parseInt(btn.dataset.id)); });
+        });
+        document.querySelectorAll('.delete-doc').forEach(btn => {
+            btn.addEventListener('click', async (e) => { e.stopPropagation(); await deleteDocument(parseInt(btn.dataset.id)); });
+        });
+    }
+
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    async function deleteDocument(id) {
+        if (!confirm(`Delete document ID ${id}? This removes from index only. PDF remains in repo.`)) return;
+        try {
+            const cfg = currentCfg();
+            const { arr, sha } = await loadDocuments();
+            const newArr = arr.filter(d => d.id !== id);
+            await ghPutContents(cfg.documentsPath, toBase64(JSON.stringify(newArr, null, 2)), `Delete document ID ${id}`, sha, cfg);
+            await refreshDocumentsList();
+            uploadStatus.innerText = `✅ Deleted document ID ${id}`;
+        } catch (err) {
+            alert("Delete failed: " + err.message);
+        }
+    }
+
+    async function startEdit(id) {
+        const doc = allDocuments.find(d => d.id === id);
+        if (!doc) return;
+        editingDocId = id;
+        const newTitle = prompt("Edit title:", doc.title);
+        if (!newTitle) return;
+        const newType = prompt("Document type (Notice of Motion, Affidavit, etc.):", doc.documentType || "Notice of Motion");
+        const newCase = prompt("Case number:", doc.caseNumber || "");
+        const newParties = prompt("Parties:", doc.parties || "");
+        const newCourt = prompt("Court:", doc.court || "");
+        const newDate = prompt("Document date (YYYY-MM-DD):", doc.documentDate || "");
+        const newDesc = prompt("Description:", doc.description || "");
+        const updatedDoc = { ...doc, title: newTitle, documentType: newType, caseNumber: newCase, parties: newParties, court: newCourt, documentDate: newDate, description: newDesc, updated: true };
+        try {
+            const cfg = currentCfg();
+            const { arr, sha } = await loadDocuments();
+            const idx = arr.findIndex(d => d.id === id);
+            if (idx !== -1) {
+                arr[idx] = updatedDoc;
+                await ghPutContents(cfg.documentsPath, toBase64(JSON.stringify(arr, null, 2)), `Update document: ${updatedDoc.title}`, sha, cfg);
+                await refreshDocumentsList();
+                uploadStatus.innerText = `Document ${id} updated.`;
+                if (autoPublishCheck.checked) await triggerPagesDeploy("Document update");
+            }
+        } catch (err) { alert("Edit error: " + err.message); }
+        editingDocId = null;
+    }
+
+    // File handling
+    function handleFiles(files) {
+        const fileArray = Array.from(files).slice(0, 8);
+        selectedFiles = fileArray.map(file => ({
+            file,
+            metadata: {
+                title: file.name.replace(/\.pdf$/i, ''),
+                documentType: "Notice of Motion",
+                caseNumber: "",
+                parties: "",
+                court: "",
+                documentDate: new Date().toISOString().slice(0,10),
+                description: `Pleading document: ${file.name}`
+            }
+        }));
+        updateMetadataUI();
+        uploadCountBadge.innerText = `${selectedFiles.length} file(s)`;
+        metadataContainer.style.display = 'block';
+    }
+
+    function updateMetadataUI() {
+        fileMetaList.innerHTML = '';
+        selectedFiles.forEach((item, idx) => {
+            const meta = item.metadata;
+            const div = document.createElement('div');
+            div.className = 'file-card';
+            div.innerHTML = `
+                <div class="file-title">
+                    <span><i class="fas fa-file-pdf"></i> ${escapeHtml(item.file.name)}</span>
+                    <span class="badge">${(item.file.size/1024/1024).toFixed(2)} MB</span>
+                </div>
+                <div class="meta-grid">
+                    <div><label>Title *</label><input type="text" class="meta-title" data-idx="${idx}" value="${escapeHtml(meta.title)}"></div>
+                    <div><label>Document Type</label><select class="meta-type" data-idx="${idx}">${DOCUMENT_TYPES.map(t => `<option value="${t}" ${meta.documentType===t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+                    <div><label>Case/Cause Number</label><input class="meta-case" data-idx="${idx}" value="${escapeHtml(meta.caseNumber)}"></div>
+                    <div><label>Parties</label><input class="meta-parties" data-idx="${idx}" value="${escapeHtml(meta.parties)}"></div>
+                    <div><label>Court</label><input class="meta-court" data-idx="${idx}" value="${escapeHtml(meta.court)}"></div>
+                    <div><label>Document Date</label><input type="date" class="meta-date" data-idx="${idx}" value="${meta.documentDate}"></div>
+                </div>
+                <div><label>Description</label><textarea class="meta-desc" data-idx="${idx}" rows="2">${escapeHtml(meta.description)}</textarea></div>
+            `;
+            fileMetaList.appendChild(div);
+        });
+        document.querySelectorAll('.meta-title, .meta-case, .meta-parties, .meta-court, .meta-date, .meta-desc').forEach(el => {
+            el.addEventListener('input', function() {
+                const idx = parseInt(this.dataset.idx);
+                if (selectedFiles[idx]) {
+                    if (this.classList.contains('meta-title')) selectedFiles[idx].metadata.title = this.value;
+                    else if (this.classList.contains('meta-case')) selectedFiles[idx].metadata.caseNumber = this.value;
+                    else if (this.classList.contains('meta-parties')) selectedFiles[idx].metadata.parties = this.value;
+                    else if (this.classList.contains('meta-court')) selectedFiles[idx].metadata.court = this.value;
+                    else if (this.classList.contains('meta-date')) selectedFiles[idx].metadata.documentDate = this.value;
+                    else if (this.classList.contains('meta-desc')) selectedFiles[idx].metadata.description = this.value;
+                }
+            });
+        });
+        document.querySelectorAll('.meta-type').forEach(sel => {
+            sel.addEventListener('change', function() {
+                const idx = parseInt(this.dataset.idx);
+                if (selectedFiles[idx]) selectedFiles[idx].metadata.documentType = this.value;
+            });
+        });
+    }
+
+    resetUploadBtn.addEventListener('click', () => {
+        selectedFiles = [];
+        metadataContainer.style.display = 'none';
+        uploadCountBadge.innerText = '0 files';
+        uploadStatus.innerText = '';
+    });
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => { if(e.target.files.length) handleFiles(e.target.files); fileInput.value = ''; });
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.background = '#eef2ff'; });
+    uploadArea.addEventListener('dragleave', () => { uploadArea.style.background = '#faf9f6'; });
+    uploadArea.addEventListener('drop', (e) => { e.preventDefault(); uploadArea.style.background = '#faf9f6'; if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
+
+    // PUBLISH to GitHub (using separate pleadings.json)
+    publishBtn.addEventListener('click', async () => {
+        if (!getToken()) { alert("Please set GitHub token first."); return; }
+        if (selectedFiles.length === 0) { alert("Select PDF files."); return; }
+        if (selectedFiles.some(f => !f.metadata.title.trim())) { alert("Please fill document titles for all files."); return; }
+        uploadStatus.innerText = "Uploading to GitHub...";
+        const cfg = currentCfg();
+        try {
+            let { arr, sha } = await loadDocuments();
+            let nextId = arr.length ? Math.max(...arr.map(d => d.id)) + 1 : 1;
+            const newDocs = [];
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const item = selectedFiles[i];
+                const file = item.file;
+                const meta = item.metadata;
+                const filename = file.name;
+                await uploadPDF(file, filename, `Add pleading: ${meta.title}`, cfg);
+                const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                const doc = {
+                    id: nextId++,
+                    title: meta.title,
+                    description: meta.description || `${meta.documentType} document`,
+                    filename: filename,
+                    documentType: meta.documentType,
+                    caseNumber: meta.caseNumber,
+                    parties: meta.parties,
+                    court: meta.court,
+                    documentDate: meta.documentDate,
+                    size: sizeMB,
+                    pages: "?",
+                    year: new Date().getFullYear(),
+                    date: new Date().toISOString(),
+                    category: mapDocTypeToCategory(meta.documentType),
+                    url: `https://${cfg.owner}.github.io/${cfg.repo}/${encodeURIComponent(filename)}`
+                };
+                newDocs.push(doc);
+                uploadStatus.innerText = `Uploaded ${i+1}/${selectedFiles.length}: ${meta.title}`;
+            }
+            arr.push(...newDocs);
+            await ghPutContents(cfg.documentsPath, toBase64(JSON.stringify(arr, null, 2)), `Add ${newDocs.length} pleadings`, sha, cfg);
+            uploadStatus.innerText = `✅ Success! ${newDocs.length} documents saved to ${cfg.documentsPath}.`;
+            await refreshDocumentsList();
+            if (autoPublishCheck.checked) await triggerPagesDeploy("New pleadings uploaded");
+            resetUploadBtn.click();
+        } catch (err) {
+            uploadStatus.innerText = `❌ Error: ${err.message}`;
+            alert(err.message);
+        }
+    });
+
+    function mapDocTypeToCategory(type) {
+        if (type.includes("Affidavit")) return "evidence";
+        if (type.includes("Motion") || type.includes("Summons")) return "procedure";
+        if (type.includes("Petition")) return "civil";
+        if (type.includes("Eviction")) return "property";
+        return "other";
+    }
+
+    async function triggerPagesDeploy(msg) {
+        try {
+            const cfg = currentCfg();
+            const markerPath = ".github/deploy-trigger.json";
+            let sha = null;
+            try { const existing = await ghGetContents(markerPath, cfg); if (existing.sha) sha = existing.sha; } catch(e) {}
+            await ghPutContents(markerPath, toBase64(JSON.stringify({ last: new Date().toISOString(), msg })), `🚀 ${msg}`, sha, cfg);
+            pagesStatusMsg.innerText = "✅ Deployment triggered (workflow will run).";
+        } catch(e) { pagesStatusMsg.innerText = "⚠️ Deploy trigger warning: " + e.message; }
+    }
+    triggerPagesBtn.addEventListener('click', async () => { if(getToken()) await triggerPagesDeploy("Manual deploy"); else alert("Set token"); });
+
+    // Export / Import (using same pleadings.json)
+    exportJsonBtn.addEventListener('click', async () => {
+        const { arr } = await loadDocuments();
+        const blob = new Blob([JSON.stringify(arr, null, 2)], {type: "application/json"});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "pleadings.json"; a.click(); URL.revokeObjectURL(a.href);
+    });
+    importJsonBtn.addEventListener('click', () => importFileInput.click());
+    importFileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0]; if(!file) return;
+        if(confirm("Replace pleadings.json with imported file?")) {
+            const text = await file.text(); const data = JSON.parse(text);
+            if(!Array.isArray(data)) throw new Error("Invalid array");
+            const cfg = currentCfg(); const { sha } = await loadDocuments();
+            await ghPutContents(cfg.documentsPath, toBase64(JSON.stringify(data, null, 2)), "Import pleadings.json", sha, cfg);
+            await refreshDocumentsList();
+            alert("Imported.");
+        }
+        importFileInput.value = '';
+    });
+
+    refreshListBtn.addEventListener('click', refreshDocumentsList);
+    [cfgOwner, cfgRepo, cfgBranch, cfgDocuments].forEach(el => el.addEventListener('change', saveConfig));
+
+    // Token modal
+    function showModal() { tokenModal.style.display = 'flex'; }
+    function hideModal() { tokenModal.style.display = 'none'; }
+    showTokenModalBtn.onclick = showModal;
+    cancelTokenBtn.onclick = hideModal;
+    saveTokenBtn.onclick = () => { const tok = tokenInput.value.trim(); if(tok) { setToken(tok); hideModal(); refreshDocumentsList(); } else alert("Enter token"); };
+    clearTokenBtn.onclick = () => { clearTokenStorage(); alert("Token cleared"); refreshDocumentsList(); };
+    window.onclick = (e) => { if(e.target === tokenModal) hideModal(); };
+
+    async function checkPagesStatus() {
+        try {
+            const cfg = currentCfg(); const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/pages`, { headers: ghHeaders() });
+            if(res.ok) pagesStatusMsg.innerText = "✅ GitHub Pages active";
+            else pagesStatusMsg.innerText = "⚠️ Pages not enabled or no permission";
+        } catch(e) { pagesStatusMsg.innerText = "Could not verify Pages"; }
+    }
+    setInterval(checkPagesStatus, 30000);
+    // initialise
+    loadConfig();
+    updateTokenUI();
+    refreshDocumentsList();
+    if(getToken()) checkPagesStatus();
+</script>
+</body>
+</html>
