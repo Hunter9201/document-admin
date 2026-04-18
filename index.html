@@ -7,234 +7,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f1f5f9;
-            color: #0f172a;
-            padding: 24px 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .admin-header {
-            background: linear-gradient(135deg, #0a2b3e, #1e4a6e);
-            color: white;
-            padding: 20px 28px;
-            border-radius: 28px;
-            margin-bottom: 28px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .logo h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
-        .logo p {
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
-
-        .token-status {
-            background: rgba(255,255,255,0.15);
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .grid-2col {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 28px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            overflow: hidden;
-            margin-bottom: 24px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .card-header {
-            padding: 18px 24px;
-            background: #fefcf7;
-            border-bottom: 1px solid #e9e5df;
-            font-weight: 700;
-            font-size: 1.2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-body {
-            padding: 24px;
-        }
-
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            flex: 1;
-            min-width: 180px;
-        }
-        label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #475569;
-            margin-bottom: 6px;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 14px;
-            font-family: inherit;
-            font-size: 0.9rem;
-            transition: 0.2s;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #1e4a6e;
-            box-shadow: 0 0 0 3px rgba(30,74,110,0.1);
-        }
-        button {
-            background: #1e4a6e;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        button:hover {
-            background: #0f3550;
-            transform: translateY(-1px);
-        }
-        .btn-outline {
-            background: white;
-            border: 1px solid #cbd5e1;
-            color: #1e293b;
-        }
-        .btn-outline:hover {
-            background: #f8fafc;
-        }
-        .btn-danger {
-            background: #b91c1c;
-        }
-        .btn-danger:hover {
-            background: #991b1b;
-        }
-        .btn-success {
-            background: #2b6e3c;
-        }
-        .upload-area {
-            border: 2px dashed #cbd5e1;
-            border-radius: 20px;
-            padding: 32px 20px;
-            text-align: center;
-            background: #faf9f6;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 20px;
-        }
-        .upload-area:hover {
-            border-color: #1e4a6e;
-            background: #f1f5f9;
-        }
-        .files-list {
-            margin-top: 20px;
-        }
-        .file-card {
-            background: #f8fafc;
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 16px;
-            border-left: 4px solid #1e4a6e;
-        }
-        .file-title {
-            font-weight: 700;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
-            gap: 12px;
-            margin: 12px 0;
-        }
-        .badge {
-            background: #e2e8f0;
-            padding: 4px 10px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        .doc-list {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        .doc-item {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 18px;
-            padding: 14px;
-            margin-bottom: 12px;
-            transition: 0.1s;
-        }
-        .doc-item:hover {
-            background: #fefcf7;
-        }
-        .status-msg {
-            margin-top: 12px;
-            font-size: 0.8rem;
-            color: #2c6e2f;
-        }
-        hr {
-            margin: 16px 0;
-        }
-        @media (max-width: 900px) {
-            .grid-2col { grid-template-columns: 1fr; }
-        }
-        .pages-status {
-            font-size: 0.7rem;
-            margin-top: 6px;
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0f172a; padding: 24px 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .admin-header { background: linear-gradient(135deg, #0a2b3e, #1e4a6e); color: white; padding: 20px 28px; border-radius: 28px; margin-bottom: 28px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .logo h1 { font-size: 1.6rem; font-weight: 700; }
+        .logo p { font-size: 0.8rem; opacity: 0.8; }
+        .token-status { background: rgba(255,255,255,0.15); padding: 8px 16px; border-radius: 40px; font-size: 0.85rem; display: flex; gap: 12px; align-items: center; }
+        .grid-2col { display: grid; grid-template-columns: 1fr 1.2fr; gap: 28px; }
+        .card { background: white; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 24px; border: 1px solid #e2e8f0; }
+        .card-header { padding: 18px 24px; background: #fefcf7; border-bottom: 1px solid #e9e5df; font-weight: 700; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+        .card-body { padding: 24px; }
+        .form-row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+        .form-group { flex: 1; min-width: 150px; }
+        label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #475569; margin-bottom: 6px; }
+        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 14px; font-family: inherit; font-size: 0.9rem; transition: 0.2s; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #1e4a6e; box-shadow: 0 0 0 3px rgba(30,74,110,0.1); }
+        button { background: #1e4a6e; border: none; color: white; padding: 10px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; }
+        button:hover { background: #0f3550; transform: translateY(-1px); }
+        .btn-outline { background: white; border: 1px solid #cbd5e1; color: #1e293b; }
+        .btn-outline:hover { background: #f8fafc; }
+        .btn-danger { background: #b91c1c; }
+        .btn-danger:hover { background: #991b1b; }
+        .btn-success { background: #2b6e3c; }
+        .upload-area { border: 2px dashed #cbd5e1; border-radius: 20px; padding: 32px 20px; text-align: center; background: #faf9f6; cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
+        .upload-area:hover { border-color: #1e4a6e; background: #f1f5f9; }
+        .files-list { margin-top: 20px; }
+        .file-card { background: #f8fafc; border-radius: 20px; padding: 16px; margin-bottom: 16px; border-left: 4px solid #1e4a6e; }
+        .file-title { font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; }
+        .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; margin: 12px 0; }
+        .badge { background: #e2e8f0; padding: 4px 10px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
+        .doc-list { max-height: 600px; overflow-y: auto; }
+        .doc-item { background: white; border: 1px solid #e2e8f0; border-radius: 18px; padding: 14px; margin-bottom: 12px; transition: 0.1s; }
+        .doc-item:hover { background: #fefcf7; }
+        .status-msg { margin-top: 12px; font-size: 0.8rem; color: #2c6e2f; }
+        hr { margin: 16px 0; }
+        @media (max-width: 900px) { .grid-2col { grid-template-columns: 1fr; } }
+        .pages-status { font-size: 0.7rem; margin-top: 6px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .url-success { color: #166534; background: #dcfce7; padding: 4px 10px; border-radius: 20px; }
+        .url-fail { color: #991b1b; background: #fee2e2; padding: 4px 10px; border-radius: 20px; }
     </style>
 </head>
 <body>
@@ -245,7 +57,7 @@
             <p>Manage notices of motion, affidavits, chamber summons, petitions, eviction notices & more</p>
         </div>
         <div class="token-status">
-            <span id="tokenIndicator" class="badge" style="background:#cbd5e1;">⚙️ No token</span>
+            <span id="tokenIndicator" class="badge">⚙️ No token</span>
             <button id="showTokenModalBtn" class="btn-outline" style="background: rgba(255,255,255,0.2); color:white;"><i class="fas fa-key"></i> Set Token</button>
             <button id="clearTokenBtn" class="btn-outline" style="background: rgba(255,255,255,0.1);"><i class="fas fa-trash"></i> Clear</button>
         </div>
@@ -272,12 +84,16 @@
                 <span id="uploadCountBadge" class="badge">0 files</span>
             </div>
             <div class="card-body">
-                <!-- Repository config – default JSON file is "pleadings.json" (separate from any other docs) -->
+                <!-- Repository config – now includes pages directory -->
                 <div class="form-row">
                     <div class="form-group"><label>GitHub Owner</label><input id="cfgOwner" placeholder="hunter9201"></div>
                     <div class="form-group"><label>Repository</label><input id="cfgRepo" placeholder="advocate"></div>
                     <div class="form-group"><label>Branch</label><input id="cfgBranch" placeholder="main"></div>
                     <div class="form-group"><label>JSON path (pleadings)</label><input id="cfgDocuments" placeholder="pleadings.json"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Pages deploy folder (leave empty for root)</label><input id="cfgPagesFolder" placeholder="(root) or docs/"></div>
+                    <div class="form-group"><label>Custom domain (optional)</label><input id="cfgCustomDomain" placeholder="www.ldclionhunter.com"></div>
                 </div>
 
                 <!-- Drop zone -->
@@ -328,9 +144,10 @@
                 <hr>
                 <div class="flex-between">
                     <span><i class="fab fa-github"></i> GitHub Pages</span>
-                    <button id="triggerPagesBtn" class="btn-outline"><i class="fas fa-rocket"></i> Trigger Deploy</button>
+                    <button id="triggerPagesBtn" class="btn-outline"><i class="fas fa-rocket"></i> Force Rebuild</button>
                 </div>
                 <div id="pagesStatusMsg" class="pages-status">Not checked</div>
+                <div id="jsonUrlCheck" class="pages-status" style="margin-top: 8px;"></div>
             </div>
         </div>
     </div>
@@ -338,14 +155,14 @@
 
 <script>
     // -------------------------------------------------------------
-    // STANDALONE ADMIN PANEL FOR PLEADINGS
-    // Uses ITS OWN data file: "pleadings.json" (configurable)
-    // Fully independent from any other documents.json
+    // ENHANCED ADMIN PANEL - Ensures pleadings.json is published to custom domain
     // -------------------------------------------------------------
     const cfgOwner = document.getElementById('cfgOwner');
     const cfgRepo = document.getElementById('cfgRepo');
     const cfgBranch = document.getElementById('cfgBranch');
     const cfgDocuments = document.getElementById('cfgDocuments');
+    const cfgPagesFolder = document.getElementById('cfgPagesFolder');
+    const cfgCustomDomain = document.getElementById('cfgCustomDomain');
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
     const metadataContainer = document.getElementById('metadataContainer');
@@ -361,6 +178,7 @@
     const importFileInput = document.getElementById('importFileInput');
     const triggerPagesBtn = document.getElementById('triggerPagesBtn');
     const pagesStatusMsg = document.getElementById('pagesStatusMsg');
+    const jsonUrlCheck = document.getElementById('jsonUrlCheck');
     const autoPublishCheck = document.getElementById('autoPublishCheck');
     const uploadCountBadge = document.getElementById('uploadCountBadge');
     const tokenIndicator = document.getElementById('tokenIndicator');
@@ -371,20 +189,18 @@
     const cancelTokenBtn = document.getElementById('cancelTokenBtn');
     const saveTokenBtn = document.getElementById('saveTokenBtn');
 
-    // Document types for pleadings
     const DOCUMENT_TYPES = [
         "Notice of Motion", "Affidavit", "Chamber Summons", "Petition", 
         "Transfer Form", "Eviction Notice", "Draft Pleading", "Memorandum of Appeal",
         "Witness Statement", "Written Submission", "Summons to Enter Appearance", "Decree"
     ];
 
-    // Storage keys
     const STORAGE_TOKEN = "PLEADINGS_GH_TOKEN";
     const STORAGE_CFG = "PLEADINGS_ADMIN_CFG";
     const SESSION_KEY = "PLEADINGS_SESSION";
     const AUTO_PUBLISH_KEY = "PLEADINGS_AUTO";
 
-    let selectedFiles = []; // { file, metadata }
+    let selectedFiles = [];
     let editingDocId = null;
     let allDocuments = [];
 
@@ -408,11 +224,15 @@
                 cfgRepo.value = cfg.repo || "advocate";
                 cfgBranch.value = cfg.branch || "main";
                 cfgDocuments.value = cfg.documentsPath || "pleadings.json";
+                cfgPagesFolder.value = cfg.pagesFolder || "";
+                cfgCustomDomain.value = cfg.customDomain || "www.ldclionhunter.com";
             } else {
                 cfgOwner.value = "hunter9201";
                 cfgRepo.value = "advocate";
                 cfgBranch.value = "main";
-                cfgDocuments.value = "pleadings.json";   // separate file
+                cfgDocuments.value = "pleadings.json";
+                cfgPagesFolder.value = "";
+                cfgCustomDomain.value = "www.ldclionhunter.com";
             }
         } catch(e) {}
     }
@@ -421,17 +241,31 @@
             owner: cfgOwner.value.trim(),
             repo: cfgRepo.value.trim(),
             branch: cfgBranch.value.trim(),
-            documentsPath: cfgDocuments.value.trim() || "pleadings.json"
+            documentsPath: cfgDocuments.value.trim() || "pleadings.json",
+            pagesFolder: cfgPagesFolder.value.trim(),
+            customDomain: cfgCustomDomain.value.trim()
         };
         localStorage.setItem(STORAGE_CFG, JSON.stringify(cfg));
     }
     function currentCfg() {
+        let pagesFolder = cfgPagesFolder.value.trim();
+        if (pagesFolder && !pagesFolder.endsWith('/')) pagesFolder += '/';
         return {
             owner: cfgOwner.value.trim() || "hunter9201",
             repo: cfgRepo.value.trim() || "advocate",
             branch: cfgBranch.value.trim() || "main",
-            documentsPath: cfgDocuments.value.trim() || "pleadings.json"
+            documentsPath: cfgDocuments.value.trim() || "pleadings.json",
+            pagesFolder: pagesFolder,
+            customDomain: cfgCustomDomain.value.trim()
         };
+    }
+
+    // Returns the full path where pleadings.json should live in the repo (respecting pages folder)
+    function getFullJsonPath(cfg) {
+        let base = cfg.pagesFolder;
+        let fileName = cfg.documentsPath;
+        if (fileName.includes('/')) fileName = fileName.split('/').pop(); // ensure just filename
+        return base + fileName;
     }
 
     // GitHub helpers
@@ -475,11 +309,12 @@
     function toBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
     function fromBase64(b64) { return decodeURIComponent(escape(atob(b64))); }
 
-    // Load pleadings.json
+    // Load documents from the correct pages folder path
     async function loadDocuments() {
         try {
             const cfg = currentCfg();
-            const got = await ghGetContents(cfg.documentsPath, cfg);
+            const fullPath = getFullJsonPath(cfg);
+            const got = await ghGetContents(fullPath, cfg);
             if (got.status === 404) return { arr: [], sha: null };
             const arr = JSON.parse(fromBase64(got.content));
             if (!Array.isArray(arr)) return { arr: [], sha: got.sha };
@@ -496,6 +331,7 @@
             allDocuments = arr;
             renderDocumentList(arr);
             docCountSpan.innerText = arr.length;
+            checkJsonUrl();
         } catch (e) {
             documentsList.innerHTML = `<div class="status-msg"><i class="fas fa-exclamation-triangle"></i> Error: ${e.message}</div>`;
         }
@@ -544,9 +380,11 @@
             const cfg = currentCfg();
             const { arr, sha } = await loadDocuments();
             const newArr = arr.filter(d => d.id !== id);
-            await ghPutContents(cfg.documentsPath, toBase64(JSON.stringify(newArr, null, 2)), `Delete document ID ${id}`, sha, cfg);
+            const fullPath = getFullJsonPath(cfg);
+            await ghPutContents(fullPath, toBase64(JSON.stringify(newArr, null, 2)), `Delete document ID ${id}`, sha, cfg);
             await refreshDocumentsList();
             uploadStatus.innerText = `✅ Deleted document ID ${id}`;
+            if (getAutoPublish()) await triggerPagesDeploy("Document deleted");
         } catch (err) {
             alert("Delete failed: " + err.message);
         }
@@ -571,10 +409,11 @@
             const idx = arr.findIndex(d => d.id === id);
             if (idx !== -1) {
                 arr[idx] = updatedDoc;
-                await ghPutContents(cfg.documentsPath, toBase64(JSON.stringify(arr, null, 2)), `Update document: ${updatedDoc.title}`, sha, cfg);
+                const fullPath = getFullJsonPath(cfg);
+                await ghPutContents(fullPath, toBase64(JSON.stringify(arr, null, 2)), `Update document: ${updatedDoc.title}`, sha, cfg);
                 await refreshDocumentsList();
                 uploadStatus.innerText = `Document ${id} updated.`;
-                if (autoPublishCheck.checked) await triggerPagesDeploy("Document update");
+                if (getAutoPublish()) await triggerPagesDeploy("Document update");
             }
         } catch (err) { alert("Edit error: " + err.message); }
         editingDocId = null;
@@ -657,7 +496,18 @@
     uploadArea.addEventListener('dragleave', () => { uploadArea.style.background = '#faf9f6'; });
     uploadArea.addEventListener('drop', (e) => { e.preventDefault(); uploadArea.style.background = '#faf9f6'; if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
 
-    // PUBLISH to GitHub (using separate pleadings.json)
+    // Force create .nojekyll file in the pages folder so JSON is not ignored
+    async function ensureNoJekyll(cfg) {
+        const nojekyllPath = cfg.pagesFolder + ".nojekyll";
+        try {
+            const existing = await ghGetContents(nojekyllPath, cfg);
+            if (existing.status !== 404) return; // already exists
+            await ghPutContents(nojekyllPath, toBase64(""), "Create .nojekyll for GitHub Pages", null, cfg);
+            console.log("Created .nojekyll");
+        } catch(e) { console.warn("Could not create .nojekyll", e); }
+    }
+
+    // PUBLISH to GitHub (using correct pages folder)
     publishBtn.addEventListener('click', async () => {
         if (!getToken()) { alert("Please set GitHub token first."); return; }
         if (selectedFiles.length === 0) { alert("Select PDF files."); return; }
@@ -665,6 +515,9 @@
         uploadStatus.innerText = "Uploading to GitHub...";
         const cfg = currentCfg();
         try {
+            // Ensure .nojekyll exists in the pages folder
+            await ensureNoJekyll(cfg);
+            
             let { arr, sha } = await loadDocuments();
             let nextId = arr.length ? Math.max(...arr.map(d => d.id)) + 1 : 1;
             const newDocs = [];
@@ -696,10 +549,11 @@
                 uploadStatus.innerText = `Uploaded ${i+1}/${selectedFiles.length}: ${meta.title}`;
             }
             arr.push(...newDocs);
-            await ghPutContents(cfg.documentsPath, toBase64(JSON.stringify(arr, null, 2)), `Add ${newDocs.length} pleadings`, sha, cfg);
-            uploadStatus.innerText = `✅ Success! ${newDocs.length} documents saved to ${cfg.documentsPath}.`;
+            const fullPath = getFullJsonPath(cfg);
+            await ghPutContents(fullPath, toBase64(JSON.stringify(arr, null, 2)), `Add ${newDocs.length} pleadings`, sha, cfg);
+            uploadStatus.innerText = `✅ Success! ${newDocs.length} documents saved to ${fullPath}.`;
             await refreshDocumentsList();
-            if (autoPublishCheck.checked) await triggerPagesDeploy("New pleadings uploaded");
+            if (getAutoPublish()) await triggerPagesDeploy("New pleadings uploaded");
             resetUploadBtn.click();
         } catch (err) {
             uploadStatus.innerText = `❌ Error: ${err.message}`;
@@ -715,19 +569,52 @@
         return "other";
     }
 
+    // Force rebuild: commit a timestamp file inside pages folder
     async function triggerPagesDeploy(msg) {
         try {
             const cfg = currentCfg();
-            const markerPath = ".github/deploy-trigger.json";
+            const timestampPath = cfg.pagesFolder + ".pages-trigger";
             let sha = null;
-            try { const existing = await ghGetContents(markerPath, cfg); if (existing.sha) sha = existing.sha; } catch(e) {}
-            await ghPutContents(markerPath, toBase64(JSON.stringify({ last: new Date().toISOString(), msg })), `🚀 ${msg}`, sha, cfg);
-            pagesStatusMsg.innerText = "✅ Deployment triggered (workflow will run).";
+            try { const existing = await ghGetContents(timestampPath, cfg); if (existing.sha) sha = existing.sha; } catch(e) {}
+            await ghPutContents(timestampPath, toBase64(JSON.stringify({ last: new Date().toISOString(), msg })), `🚀 ${msg}`, sha, cfg);
+            pagesStatusMsg.innerText = "✅ Deployment triggered (GitHub Pages will rebuild).";
+            setTimeout(() => checkJsonUrl(), 5000);
         } catch(e) { pagesStatusMsg.innerText = "⚠️ Deploy trigger warning: " + e.message; }
     }
-    triggerPagesBtn.addEventListener('click', async () => { if(getToken()) await triggerPagesDeploy("Manual deploy"); else alert("Set token"); });
+    triggerPagesBtn.addEventListener('click', async () => { if(getToken()) await triggerPagesDeploy("Manual rebuild"); else alert("Set token"); });
 
-    // Export / Import (using same pleadings.json)
+    // Check if pleadings.json is accessible via custom domain
+    async function checkJsonUrl() {
+        const cfg = currentCfg();
+        let baseUrl = "";
+        if (cfg.customDomain) {
+            baseUrl = `https://${cfg.customDomain}`;
+        } else {
+            baseUrl = `https://${cfg.owner}.github.io/${cfg.repo}`;
+        }
+        // Remove trailing slash if any
+        baseUrl = baseUrl.replace(/\/$/, '');
+        const jsonFileName = cfg.documentsPath.split('/').pop();
+        let jsonPath = "";
+        if (cfg.pagesFolder) {
+            jsonPath = cfg.pagesFolder + jsonFileName;
+        } else {
+            jsonPath = jsonFileName;
+        }
+        const fullUrl = `${baseUrl}/${jsonPath}`;
+        try {
+            const res = await fetch(fullUrl, { method: 'HEAD', cache: 'no-cache' });
+            if (res.ok) {
+                jsonUrlCheck.innerHTML = `<span class="url-success"><i class="fas fa-check-circle"></i> JSON is live at <a href="${fullUrl}" target="_blank">${fullUrl}</a></span>`;
+            } else {
+                jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-exclamation-triangle"></i> JSON not yet available at ${fullUrl} (status ${res.status}). Pages may take 1-2 minutes to rebuild.</span>`;
+            }
+        } catch(e) {
+            jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-link"></i> Cannot reach ${fullUrl} - check custom domain DNS or wait for deploy.</span>`;
+        }
+    }
+
+    // Export / Import
     exportJsonBtn.addEventListener('click', async () => {
         const { arr } = await loadDocuments();
         const blob = new Blob([JSON.stringify(arr, null, 2)], {type: "application/json"});
@@ -740,15 +627,17 @@
             const text = await file.text(); const data = JSON.parse(text);
             if(!Array.isArray(data)) throw new Error("Invalid array");
             const cfg = currentCfg(); const { sha } = await loadDocuments();
-            await ghPutContents(cfg.documentsPath, toBase64(JSON.stringify(data, null, 2)), "Import pleadings.json", sha, cfg);
+            const fullPath = getFullJsonPath(cfg);
+            await ghPutContents(fullPath, toBase64(JSON.stringify(data, null, 2)), "Import pleadings.json", sha, cfg);
             await refreshDocumentsList();
             alert("Imported.");
+            if (getAutoPublish()) await triggerPagesDeploy("Import");
         }
         importFileInput.value = '';
     });
 
     refreshListBtn.addEventListener('click', refreshDocumentsList);
-    [cfgOwner, cfgRepo, cfgBranch, cfgDocuments].forEach(el => el.addEventListener('change', saveConfig));
+    [cfgOwner, cfgRepo, cfgBranch, cfgDocuments, cfgPagesFolder, cfgCustomDomain].forEach(el => el.addEventListener('change', saveConfig));
 
     // Token modal
     function showModal() { tokenModal.style.display = 'flex'; }
@@ -762,16 +651,16 @@
     async function checkPagesStatus() {
         try {
             const cfg = currentCfg(); const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/pages`, { headers: ghHeaders() });
-            if(res.ok) pagesStatusMsg.innerText = "✅ GitHub Pages active";
-            else pagesStatusMsg.innerText = "⚠️ Pages not enabled or no permission";
-        } catch(e) { pagesStatusMsg.innerText = "Could not verify Pages"; }
+            if(res.ok) pagesStatusMsg.innerHTML = "✅ GitHub Pages enabled";
+            else pagesStatusMsg.innerHTML = "⚠️ Pages not enabled or no permission";
+        } catch(e) { pagesStatusMsg.innerHTML = "Could not verify Pages"; }
     }
-    setInterval(checkPagesStatus, 30000);
+    setInterval(checkPagesStatus, 60000);
     // initialise
     loadConfig();
     updateTokenUI();
     refreshDocumentsList();
-    if(getToken()) checkPagesStatus();
+    if(getToken()) { checkPagesStatus(); checkJsonUrl(); }
 </script>
 </body>
 </html>
