@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Pleadings Vault | Admin Panel</title>
+    <title>Pleadings Vault | Admin Panel · Hunter9201/I</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -47,6 +47,7 @@
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .url-success { color: #166534; background: #dcfce7; padding: 4px 10px; border-radius: 20px; }
         .url-fail { color: #991b1b; background: #fee2e2; padding: 4px 10px; border-radius: 20px; }
+        .repo-highlight { background: #fef9e3; border-left: 3px solid #f59e0b; padding: 6px 12px; border-radius: 16px; font-size: 0.75rem; margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -54,7 +55,7 @@
     <div class="admin-header">
         <div class="logo">
             <h1><i class="fas fa-gavel"></i> Pleadings Vault · Admin</h1>
-            <p>Manage notices of motion, affidavits, chamber summons, petitions, eviction notices & more</p>
+            <p>Target repo: <strong>Hunter9201/I</strong> · pleadings.json + PDFs → GitHub Pages</p>
         </div>
         <div class="token-status">
             <span id="tokenIndicator" class="badge">⚙️ No token</span>
@@ -67,7 +68,7 @@
     <div id="tokenModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:1000;">
         <div style="background:white; max-width:460px; width:90%; border-radius:28px; padding:24px;">
             <h3><i class="fab fa-github"></i> GitHub Personal Access Token</h3>
-            <p class="pages-status">Fine-grained token with <strong>repo</strong> + <strong>workflow</strong> scopes.</p>
+            <p class="pages-status">Fine-grained token with <strong>repo</strong> + <strong>workflow</strong> scopes (classic or fine-grained).</p>
             <input type="text" id="tokenInput" placeholder="github_pat_xxx..." style="width:100%; margin:12px 0;">
             <div style="display:flex; gap:12px; justify-content:flex-end;">
                 <button id="cancelTokenBtn" class="btn-outline">Cancel</button>
@@ -84,12 +85,15 @@
                 <span id="uploadCountBadge" class="badge">0 files</span>
             </div>
             <div class="card-body">
-                <!-- Repository config – now includes pages directory -->
+                <!-- Repository config – preconfigured for Hunter9201/I -->
+                <div class="repo-highlight">
+                    <i class="fas fa-database"></i> JSON master index will be stored in <strong>Hunter9201/I</strong> (respecting Pages folder path)
+                </div>
                 <div class="form-row">
                     <div class="form-group"><label>GitHub Owner</label><input id="cfgOwner" placeholder="hunter9201"></div>
-                    <div class="form-group"><label>Repository</label><input id="cfgRepo" placeholder="advocate"></div>
+                    <div class="form-group"><label>Repository</label><input id="cfgRepo" placeholder="I" value="I"></div>
                     <div class="form-group"><label>Branch</label><input id="cfgBranch" placeholder="main"></div>
-                    <div class="form-group"><label>JSON path (pleadings)</label><input id="cfgDocuments" placeholder="pleadings.json"></div>
+                    <div class="form-group"><label>JSON filename</label><input id="cfgDocuments" placeholder="pleadings.json"></div>
                 </div>
                 <div class="form-row">
                     <div class="form-group"><label>Pages deploy folder (leave empty for root)</label><input id="cfgPagesFolder" placeholder="(root) or docs/"></div>
@@ -99,8 +103,8 @@
                 <!-- Drop zone -->
                 <div id="uploadArea" class="upload-area">
                     <i class="fas fa-file-pdf" style="font-size: 2rem; color:#1e4a6e;"></i>
-                    <p><strong>Click or drag PDF files</strong> (pleadings, affidavits, motions, etc.)</p>
-                    <p class="pages-status">Max 8 files · 40MB each</p>
+                    <p><strong>Click or drag PDF files</strong> (notices, affidavits, motions, etc.)</p>
+                    <p class="pages-status">Max 8 files · 40MB each → stored in repo Hunter9201/I</p>
                     <input type="file" id="fileInput" multiple accept=".pdf" style="display:none">
                 </div>
 
@@ -113,10 +117,10 @@
 
                 <!-- Auto publish & actions -->
                 <div style="margin: 20px 0 12px;">
-                    <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="autoPublishCheck" checked> <span>Auto-publish to GitHub Pages after upload</span></label>
+                    <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="autoPublishCheck" checked> <span>Auto-publish to GitHub Pages after upload (rebuild)</span></label>
                 </div>
                 <div class="flex-between">
-                    <button id="publishBtn" class="btn-success"><i class="fas fa-cloud-upload-alt"></i> Upload to GitHub</button>
+                    <button id="publishBtn" class="btn-success"><i class="fas fa-cloud-upload-alt"></i> Upload to GitHub (Hunter9201/I)</button>
                     <button id="resetUploadBtn" class="btn-outline"><i class="fas fa-undo-alt"></i> Clear selection</button>
                 </div>
                 <div id="uploadStatus" class="status-msg"></div>
@@ -126,24 +130,24 @@
         <!-- RIGHT: MANAGE DOCUMENTS -->
         <div class="card">
             <div class="card-header">
-                <span><i class="fas fa-database"></i> Pleadings Library</span>
+                <span><i class="fas fa-database"></i> Pleadings Library · JSON Index</span>
                 <button id="refreshListBtn" class="btn-outline" style="padding:4px 12px;"><i class="fas fa-sync-alt"></i> Refresh</button>
             </div>
             <div class="card-body">
                 <div class="flex-between" style="margin-bottom: 12px;">
-                    <span><strong id="docCount">0</strong> documents</span>
+                    <span><strong id="docCount">0</strong> documents indexed</span>
                     <div>
-                        <button id="exportJsonBtn" class="btn-outline" style="margin-right:6px;"><i class="fas fa-download"></i> Export</button>
-                        <button id="importJsonBtn" class="btn-outline"><i class="fas fa-upload"></i> Import</button>
+                        <button id="exportJsonBtn" class="btn-outline" style="margin-right:6px;"><i class="fas fa-download"></i> Export JSON</button>
+                        <button id="importJsonBtn" class="btn-outline"><i class="fas fa-upload"></i> Import JSON</button>
                         <input type="file" id="importFileInput" accept="application/json" style="display:none">
                     </div>
                 </div>
                 <div id="documentsList" class="doc-list">
-                    <div class="status-msg"><i class="fas fa-spinner fa-pulse"></i> Loading pleadings...</div>
+                    <div class="status-msg"><i class="fas fa-spinner fa-pulse"></i> Loading pleadings from Hunter9201/I...</div>
                 </div>
                 <hr>
                 <div class="flex-between">
-                    <span><i class="fab fa-github"></i> GitHub Pages</span>
+                    <span><i class="fab fa-github"></i> GitHub Pages (repo: Hunter9201/I)</span>
                     <button id="triggerPagesBtn" class="btn-outline"><i class="fas fa-rocket"></i> Force Rebuild</button>
                 </div>
                 <div id="pagesStatusMsg" class="pages-status">Not checked</div>
@@ -154,9 +158,10 @@
 </div>
 
 <script>
-    // -------------------------------------------------------------
-    // ENHANCED ADMIN PANEL - Ensures pleadings.json is published to custom domain
-    // -------------------------------------------------------------
+    // ============================================================
+    // ADMIN PANEL — CONFIGURED FOR REPOSITORY: Hunter9201/I
+    // pleadings.json lives inside the pages folder (or root) of that repo
+    // ============================================================
     const cfgOwner = document.getElementById('cfgOwner');
     const cfgRepo = document.getElementById('cfgRepo');
     const cfgBranch = document.getElementById('cfgBranch');
@@ -215,26 +220,36 @@
     autoPublishCheck.checked = getAutoPublish();
     autoPublishCheck.addEventListener('change', (e) => setAutoPublish(e.target.checked));
 
+    // Config defaults: force target repository = "I" (owner = hunter9201)
     function loadConfig() {
         try {
             const saved = localStorage.getItem(STORAGE_CFG);
             if (saved) {
                 const cfg = JSON.parse(saved);
                 cfgOwner.value = cfg.owner || "hunter9201";
-                cfgRepo.value = cfg.repo || "advocate";
+                cfgRepo.value = cfg.repo || "I";
                 cfgBranch.value = cfg.branch || "main";
                 cfgDocuments.value = cfg.documentsPath || "pleadings.json";
                 cfgPagesFolder.value = cfg.pagesFolder || "";
                 cfgCustomDomain.value = cfg.customDomain || "www.ldclionhunter.com";
             } else {
+                // Default: Hunter9201/I
                 cfgOwner.value = "hunter9201";
-                cfgRepo.value = "advocate";
+                cfgRepo.value = "I";
                 cfgBranch.value = "main";
                 cfgDocuments.value = "pleadings.json";
                 cfgPagesFolder.value = "";
                 cfgCustomDomain.value = "www.ldclionhunter.com";
             }
-        } catch(e) {}
+        } catch(e) { 
+            // fallback
+            cfgOwner.value = "hunter9201";
+            cfgRepo.value = "I";
+            cfgBranch.value = "main";
+            cfgDocuments.value = "pleadings.json";
+            cfgPagesFolder.value = "";
+            cfgCustomDomain.value = "www.ldclionhunter.com";
+        }
     }
     function saveConfig() {
         const cfg = {
@@ -252,7 +267,7 @@
         if (pagesFolder && !pagesFolder.endsWith('/')) pagesFolder += '/';
         return {
             owner: cfgOwner.value.trim() || "hunter9201",
-            repo: cfgRepo.value.trim() || "advocate",
+            repo: cfgRepo.value.trim() || "I",
             branch: cfgBranch.value.trim() || "main",
             documentsPath: cfgDocuments.value.trim() || "pleadings.json",
             pagesFolder: pagesFolder,
@@ -260,11 +275,11 @@
         };
     }
 
-    // Returns the full path where pleadings.json should live in the repo (respecting pages folder)
+    // Full path for pleadings.json inside repo (respecting pages folder)
     function getFullJsonPath(cfg) {
         let base = cfg.pagesFolder;
         let fileName = cfg.documentsPath;
-        if (fileName.includes('/')) fileName = fileName.split('/').pop(); // ensure just filename
+        if (fileName.includes('/')) fileName = fileName.split('/').pop();
         return base + fileName;
     }
 
@@ -309,7 +324,7 @@
     function toBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
     function fromBase64(b64) { return decodeURIComponent(escape(atob(b64))); }
 
-    // Load documents from the correct pages folder path
+    // Load documents from the configured repo (Hunter9201/I)
     async function loadDocuments() {
         try {
             const cfg = currentCfg();
@@ -339,7 +354,7 @@
 
     function renderDocumentList(docs) {
         if (!docs.length) {
-            documentsList.innerHTML = `<div class="status-msg">📭 No pleadings uploaded yet. Use the upload form.</div>`;
+            documentsList.innerHTML = `<div class="status-msg">📭 No pleadings indexed yet. Upload PDFs → they will be added to Hunter9201/I and listed here.</div>`;
             return;
         }
         documentsList.innerHTML = '';
@@ -375,7 +390,7 @@
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
     async function deleteDocument(id) {
-        if (!confirm(`Delete document ID ${id}? This removes from index only. PDF remains in repo.`)) return;
+        if (!confirm(`Delete document ID ${id}? This removes from JSON index only. PDF stays in repo.`)) return;
         try {
             const cfg = currentCfg();
             const { arr, sha } = await loadDocuments();
@@ -419,7 +434,6 @@
         editingDocId = null;
     }
 
-    // File handling
     function handleFiles(files) {
         const fileArray = Array.from(files).slice(0, 8);
         selectedFiles = fileArray.map(file => ({
@@ -496,28 +510,23 @@
     uploadArea.addEventListener('dragleave', () => { uploadArea.style.background = '#faf9f6'; });
     uploadArea.addEventListener('drop', (e) => { e.preventDefault(); uploadArea.style.background = '#faf9f6'; if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
 
-    // Force create .nojekyll file in the pages folder so JSON is not ignored
     async function ensureNoJekyll(cfg) {
         const nojekyllPath = cfg.pagesFolder + ".nojekyll";
         try {
             const existing = await ghGetContents(nojekyllPath, cfg);
-            if (existing.status !== 404) return; // already exists
+            if (existing.status !== 404) return;
             await ghPutContents(nojekyllPath, toBase64(""), "Create .nojekyll for GitHub Pages", null, cfg);
-            console.log("Created .nojekyll");
-        } catch(e) { console.warn("Could not create .nojekyll", e); }
+        } catch(e) { console.warn("nojekyll", e); }
     }
 
-    // PUBLISH to GitHub (using correct pages folder)
     publishBtn.addEventListener('click', async () => {
-        if (!getToken()) { alert("Please set GitHub token first."); return; }
+        if (!getToken()) { alert("Please set GitHub token first (repo scope)."); return; }
         if (selectedFiles.length === 0) { alert("Select PDF files."); return; }
         if (selectedFiles.some(f => !f.metadata.title.trim())) { alert("Please fill document titles for all files."); return; }
-        uploadStatus.innerText = "Uploading to GitHub...";
+        uploadStatus.innerText = "Uploading to GitHub (Hunter9201/I)...";
         const cfg = currentCfg();
         try {
-            // Ensure .nojekyll exists in the pages folder
             await ensureNoJekyll(cfg);
-            
             let { arr, sha } = await loadDocuments();
             let nextId = arr.length ? Math.max(...arr.map(d => d.id)) + 1 : 1;
             const newDocs = [];
@@ -551,7 +560,7 @@
             arr.push(...newDocs);
             const fullPath = getFullJsonPath(cfg);
             await ghPutContents(fullPath, toBase64(JSON.stringify(arr, null, 2)), `Add ${newDocs.length} pleadings`, sha, cfg);
-            uploadStatus.innerText = `✅ Success! ${newDocs.length} documents saved to ${fullPath}.`;
+            uploadStatus.innerText = `✅ Success! ${newDocs.length} documents saved to ${fullPath} in Hunter9201/I.`;
             await refreshDocumentsList();
             if (getAutoPublish()) await triggerPagesDeploy("New pleadings uploaded");
             resetUploadBtn.click();
@@ -569,7 +578,6 @@
         return "other";
     }
 
-    // Force rebuild: commit a timestamp file inside pages folder
     async function triggerPagesDeploy(msg) {
         try {
             const cfg = currentCfg();
@@ -581,40 +589,24 @@
             setTimeout(() => checkJsonUrl(), 5000);
         } catch(e) { pagesStatusMsg.innerText = "⚠️ Deploy trigger warning: " + e.message; }
     }
-    triggerPagesBtn.addEventListener('click', async () => { if(getToken()) await triggerPagesDeploy("Manual rebuild"); else alert("Set token"); });
+    triggerPagesBtn.addEventListener('click', async () => { if(getToken()) await triggerPagesDeploy("Manual rebuild"); else alert("Set token first"); });
 
-    // Check if pleadings.json is accessible via custom domain
     async function checkJsonUrl() {
         const cfg = currentCfg();
         let baseUrl = "";
-        if (cfg.customDomain) {
-            baseUrl = `https://${cfg.customDomain}`;
-        } else {
-            baseUrl = `https://${cfg.owner}.github.io/${cfg.repo}`;
-        }
-        // Remove trailing slash if any
+        if (cfg.customDomain) baseUrl = `https://${cfg.customDomain}`;
+        else baseUrl = `https://${cfg.owner}.github.io/${cfg.repo}`;
         baseUrl = baseUrl.replace(/\/$/, '');
         const jsonFileName = cfg.documentsPath.split('/').pop();
-        let jsonPath = "";
-        if (cfg.pagesFolder) {
-            jsonPath = cfg.pagesFolder + jsonFileName;
-        } else {
-            jsonPath = jsonFileName;
-        }
+        let jsonPath = cfg.pagesFolder + jsonFileName;
         const fullUrl = `${baseUrl}/${jsonPath}`;
         try {
             const res = await fetch(fullUrl, { method: 'HEAD', cache: 'no-cache' });
-            if (res.ok) {
-                jsonUrlCheck.innerHTML = `<span class="url-success"><i class="fas fa-check-circle"></i> JSON is live at <a href="${fullUrl}" target="_blank">${fullUrl}</a></span>`;
-            } else {
-                jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-exclamation-triangle"></i> JSON not yet available at ${fullUrl} (status ${res.status}). Pages may take 1-2 minutes to rebuild.</span>`;
-            }
-        } catch(e) {
-            jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-link"></i> Cannot reach ${fullUrl} - check custom domain DNS or wait for deploy.</span>`;
-        }
+            if (res.ok) jsonUrlCheck.innerHTML = `<span class="url-success"><i class="fas fa-check-circle"></i> JSON is live at <a href="${fullUrl}" target="_blank">${fullUrl}</a></span>`;
+            else jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-exclamation-triangle"></i> JSON not yet available (status ${res.status}). Pages may take 1-2 min.</span>`;
+        } catch(e) { jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-link"></i> Cannot reach ${fullUrl} - check domain or wait for deploy.</span>`; }
     }
 
-    // Export / Import
     exportJsonBtn.addEventListener('click', async () => {
         const { arr } = await loadDocuments();
         const blob = new Blob([JSON.stringify(arr, null, 2)], {type: "application/json"});
@@ -639,7 +631,7 @@
     refreshListBtn.addEventListener('click', refreshDocumentsList);
     [cfgOwner, cfgRepo, cfgBranch, cfgDocuments, cfgPagesFolder, cfgCustomDomain].forEach(el => el.addEventListener('change', saveConfig));
 
-    // Token modal
+    // Token modal handlers
     function showModal() { tokenModal.style.display = 'flex'; }
     function hideModal() { tokenModal.style.display = 'none'; }
     showTokenModalBtn.onclick = showModal;
@@ -650,13 +642,13 @@
 
     async function checkPagesStatus() {
         try {
-            const cfg = currentCfg(); const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/pages`, { headers: ghHeaders() });
-            if(res.ok) pagesStatusMsg.innerHTML = "✅ GitHub Pages enabled";
+            const cfg = currentCfg();
+            const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/pages`, { headers: ghHeaders() });
+            if(res.ok) pagesStatusMsg.innerHTML = "✅ GitHub Pages enabled (Hunter9201/I)";
             else pagesStatusMsg.innerHTML = "⚠️ Pages not enabled or no permission";
         } catch(e) { pagesStatusMsg.innerHTML = "Could not verify Pages"; }
     }
     setInterval(checkPagesStatus, 60000);
-    // initialise
     loadConfig();
     updateTokenUI();
     refreshDocumentsList();
