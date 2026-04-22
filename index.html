@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Pleadings Vault | Admin Panel · Hunter9201/I</title>
+    <title>Pleadings Vault | Admin Panel · Hunter9201/I · Enhanced</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -48,6 +48,11 @@
         .url-success { color: #166534; background: #dcfce7; padding: 4px 10px; border-radius: 20px; }
         .url-fail { color: #991b1b; background: #fee2e2; padding: 4px 10px; border-radius: 20px; }
         .repo-highlight { background: #fef9e3; border-left: 3px solid #f59e0b; padding: 6px 12px; border-radius: 16px; font-size: 0.75rem; margin-bottom: 12px; }
+        .legal-detail-row { margin-top: 8px; background: #f1f5f9; border-radius: 14px; padding: 8px 10px; font-size: 0.75rem; border-left: 2px solid #1e4a6e; }
+        .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-card { background: white; max-width: 560px; width: 90%; border-radius: 28px; padding: 24px; max-height: 85vh; overflow-y: auto; }
+        .modal-card h3 { margin-bottom: 16px; }
+        .modal-card .form-group { margin-bottom: 14px; }
     </style>
 </head>
 <body>
@@ -65,10 +70,10 @@
     </div>
 
     <!-- Token Modal -->
-    <div id="tokenModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:1000;">
+    <div id="tokenModal" style="display:none;" class="modal-overlay">
         <div style="background:white; max-width:460px; width:90%; border-radius:28px; padding:24px;">
             <h3><i class="fab fa-github"></i> GitHub Personal Access Token</h3>
-            <p class="pages-status">Fine-grained token with <strong>repo</strong> + <strong>workflow</strong> scopes (classic or fine-grained).</p>
+            <p class="pages-status">Fine-grained token with <strong>repo</strong> + <strong>workflow</strong> scopes.</p>
             <input type="text" id="tokenInput" placeholder="github_pat_xxx..." style="width:100%; margin:12px 0;">
             <div style="display:flex; gap:12px; justify-content:flex-end;">
                 <button id="cancelTokenBtn" class="btn-outline">Cancel</button>
@@ -77,17 +82,38 @@
         </div>
     </div>
 
+    <!-- Edit Document Modal (enhanced) -->
+    <div id="editDocModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <h3><i class="fas fa-edit"></i> Edit Legal Document</h3>
+            <input type="hidden" id="editDocId">
+            <div class="form-group"><label>Title *</label><input id="editTitle" type="text"></div>
+            <div class="form-group"><label>Document Type</label><select id="editType"></select></div>
+            <div class="form-group"><label>Case Number</label><input id="editCaseNumber" type="text"></div>
+            <div class="form-group"><label>Parties</label><input id="editParties" type="text"></div>
+            <div class="form-group"><label>Court</label><input id="editCourt" type="text"></div>
+            <div class="form-group"><label>Document Date (YYYY-MM-DD)</label><input id="editDocumentDate" type="date"></div>
+            <div class="form-group"><label>Description</label><textarea id="editDescription" rows="2"></textarea></div>
+            <div class="form-group"><label>📜 Procedure (Step-by-step / Legal process)</label><textarea id="editProcedure" rows="3" placeholder="e.g., Filing at registry, service within 7 days, hearing..."></textarea></div>
+            <div class="form-group"><label>⚖️ Locus Classicus (Key Case)</label><input id="editLocusClassicus" type="text" placeholder="e.g., Donoghue v Stevenson [1932] AC 562"></div>
+            <div class="form-group"><label>💰 Filing Fees (KES/USD)</label><input id="editFilingFees" type="text" placeholder="e.g., KES 5,000 or USD 45"></div>
+            <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:20px;">
+                <button id="closeEditModalBtn" class="btn-outline">Cancel</button>
+                <button id="saveEditDocBtn" class="btn-success">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
     <div class="grid-2col">
-        <!-- LEFT: UPLOAD + METADATA -->
+        <!-- LEFT: UPLOAD + METADATA with new fields -->
         <div class="card">
             <div class="card-header">
                 <span><i class="fas fa-upload"></i> Upload Pleadings & Motions</span>
                 <span id="uploadCountBadge" class="badge">0 files</span>
             </div>
             <div class="card-body">
-                <!-- Repository config – preconfigured for Hunter9201/I -->
                 <div class="repo-highlight">
-                    <i class="fas fa-database"></i> JSON master index will be stored in <strong>Hunter9201/I</strong> (respecting Pages folder path)
+                    <i class="fas fa-database"></i> JSON master index stored in <strong>Hunter9201/I</strong> (procedure, locus classicus & fees included)
                 </div>
                 <div class="form-row">
                     <div class="form-group"><label>GitHub Owner</label><input id="cfgOwner" placeholder="hunter9201"></div>
@@ -100,7 +126,6 @@
                     <div class="form-group"><label>Custom domain (optional)</label><input id="cfgCustomDomain" placeholder="www.ldclionhunter.com"></div>
                 </div>
 
-                <!-- Drop zone -->
                 <div id="uploadArea" class="upload-area">
                     <i class="fas fa-file-pdf" style="font-size: 2rem; color:#1e4a6e;"></i>
                     <p><strong>Click or drag PDF files</strong> (notices, affidavits, motions, etc.)</p>
@@ -108,14 +133,12 @@
                     <input type="file" id="fileInput" multiple accept=".pdf" style="display:none">
                 </div>
 
-                <!-- Dynamic metadata per file -->
                 <div id="metadataContainer" style="display:none;">
                     <hr>
                     <h4><i class="fas fa-pen-alt"></i> Document Metadata (per file)</h4>
                     <div id="fileMetaList"></div>
                 </div>
 
-                <!-- Auto publish & actions -->
                 <div style="margin: 20px 0 12px;">
                     <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="autoPublishCheck" checked> <span>Auto-publish to GitHub Pages after upload (rebuild)</span></label>
                 </div>
@@ -127,7 +150,7 @@
             </div>
         </div>
 
-        <!-- RIGHT: MANAGE DOCUMENTS -->
+        <!-- RIGHT: MANAGE DOCUMENTS with new fields visible -->
         <div class="card">
             <div class="card-header">
                 <span><i class="fas fa-database"></i> Pleadings Library · JSON Index</span>
@@ -159,8 +182,8 @@
 
 <script>
     // ============================================================
-    // ADMIN PANEL — CONFIGURED FOR REPOSITORY: Hunter9201/I
-    // pleadings.json lives inside the pages folder (or root) of that repo
+    // ENHANCED ADMIN PANEL — includes Procedure, Locus Classicus, Filing Fees
+    // Repository: Hunter9201/I
     // ============================================================
     const cfgOwner = document.getElementById('cfgOwner');
     const cfgRepo = document.getElementById('cfgRepo');
@@ -193,6 +216,21 @@
     const tokenInput = document.getElementById('tokenInput');
     const cancelTokenBtn = document.getElementById('cancelTokenBtn');
     const saveTokenBtn = document.getElementById('saveTokenBtn');
+    // edit modal elements
+    const editDocModal = document.getElementById('editDocModal');
+    const editDocId = document.getElementById('editDocId');
+    const editTitle = document.getElementById('editTitle');
+    const editType = document.getElementById('editType');
+    const editCaseNumber = document.getElementById('editCaseNumber');
+    const editParties = document.getElementById('editParties');
+    const editCourt = document.getElementById('editCourt');
+    const editDocumentDate = document.getElementById('editDocumentDate');
+    const editDescription = document.getElementById('editDescription');
+    const editProcedure = document.getElementById('editProcedure');
+    const editLocusClassicus = document.getElementById('editLocusClassicus');
+    const editFilingFees = document.getElementById('editFilingFees');
+    const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+    const saveEditDocBtn = document.getElementById('saveEditDocBtn');
 
     const DOCUMENT_TYPES = [
         "Notice of Motion", "Affidavit", "Chamber Summons", "Petition", 
@@ -220,7 +258,6 @@
     autoPublishCheck.checked = getAutoPublish();
     autoPublishCheck.addEventListener('change', (e) => setAutoPublish(e.target.checked));
 
-    // Config defaults: force target repository = "I" (owner = hunter9201)
     function loadConfig() {
         try {
             const saved = localStorage.getItem(STORAGE_CFG);
@@ -233,7 +270,6 @@
                 cfgPagesFolder.value = cfg.pagesFolder || "";
                 cfgCustomDomain.value = cfg.customDomain || "www.ldclionhunter.com";
             } else {
-                // Default: Hunter9201/I
                 cfgOwner.value = "hunter9201";
                 cfgRepo.value = "I";
                 cfgBranch.value = "main";
@@ -242,212 +278,115 @@
                 cfgCustomDomain.value = "www.ldclionhunter.com";
             }
         } catch(e) { 
-            // fallback
-            cfgOwner.value = "hunter9201";
-            cfgRepo.value = "I";
-            cfgBranch.value = "main";
-            cfgDocuments.value = "pleadings.json";
-            cfgPagesFolder.value = "";
-            cfgCustomDomain.value = "www.ldclionhunter.com";
+            cfgOwner.value = "hunter9201"; cfgRepo.value = "I"; cfgBranch.value = "main";
+            cfgDocuments.value = "pleadings.json"; cfgPagesFolder.value = ""; cfgCustomDomain.value = "www.ldclionhunter.com";
         }
     }
     function saveConfig() {
-        const cfg = {
-            owner: cfgOwner.value.trim(),
-            repo: cfgRepo.value.trim(),
-            branch: cfgBranch.value.trim(),
-            documentsPath: cfgDocuments.value.trim() || "pleadings.json",
-            pagesFolder: cfgPagesFolder.value.trim(),
-            customDomain: cfgCustomDomain.value.trim()
-        };
+        const cfg = { owner: cfgOwner.value.trim(), repo: cfgRepo.value.trim(), branch: cfgBranch.value.trim(), documentsPath: cfgDocuments.value.trim() || "pleadings.json", pagesFolder: cfgPagesFolder.value.trim(), customDomain: cfgCustomDomain.value.trim() };
         localStorage.setItem(STORAGE_CFG, JSON.stringify(cfg));
     }
     function currentCfg() {
         let pagesFolder = cfgPagesFolder.value.trim();
         if (pagesFolder && !pagesFolder.endsWith('/')) pagesFolder += '/';
-        return {
-            owner: cfgOwner.value.trim() || "hunter9201",
-            repo: cfgRepo.value.trim() || "I",
-            branch: cfgBranch.value.trim() || "main",
-            documentsPath: cfgDocuments.value.trim() || "pleadings.json",
-            pagesFolder: pagesFolder,
-            customDomain: cfgCustomDomain.value.trim()
-        };
+        return { owner: cfgOwner.value.trim() || "hunter9201", repo: cfgRepo.value.trim() || "I", branch: cfgBranch.value.trim() || "main", documentsPath: cfgDocuments.value.trim() || "pleadings.json", pagesFolder: pagesFolder, customDomain: cfgCustomDomain.value.trim() };
     }
-
-    // Full path for pleadings.json inside repo (respecting pages folder)
-    function getFullJsonPath(cfg) {
-        let base = cfg.pagesFolder;
-        let fileName = cfg.documentsPath;
-        if (fileName.includes('/')) fileName = fileName.split('/').pop();
-        return base + fileName;
-    }
-
-    // GitHub helpers
-    function ghHeaders() {
-        const h = { "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
-        const t = getToken();
-        if (t) h["Authorization"] = "Bearer " + t;
-        return h;
-    }
-    async function ghGetContents(path, cfg) {
-        const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}?ref=${cfg.branch}`;
-        const res = await fetch(url, { headers: ghHeaders() });
-        if (res.status === 404) return { status: 404 };
-        if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`);
-        return res.json();
-    }
-    async function ghPutContents(path, base64Content, message, sha = null, cfg) {
-        const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}`;
-        const body = { message, content: base64Content, branch: cfg.branch };
-        if (sha) body.sha = sha;
-        const res = await fetch(url, { method: "PUT", headers: { ...ghHeaders(), "Content-Type": "application/json" }, body: JSON.stringify(body) });
-        if (!res.ok) throw new Error(`PUT ${path} failed: ${res.status}`);
-        return res.json();
-    }
-    async function uploadPDF(file, filename, message, cfg) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = async () => {
-                try {
-                    const base64 = btoa(new Uint8Array(reader.result).reduce((data, byte) => data + String.fromCharCode(byte), ''));
-                    let sha = null;
-                    try { const existing = await ghGetContents(filename, cfg); if (existing.sha) sha = existing.sha; } catch(e) {}
-                    const res = await ghPutContents(filename, base64, message, sha, cfg);
-                    resolve(res);
-                } catch (e) { reject(e); }
-            };
-            reader.onerror = reject;
-            reader.readAsArrayBuffer(file);
-        });
-    }
+    function getFullJsonPath(cfg) { return cfg.pagesFolder + (cfg.documentsPath.includes('/') ? cfg.documentsPath.split('/').pop() : cfg.documentsPath); }
+    function ghHeaders() { const h = { "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" }; const t = getToken(); if (t) h["Authorization"] = "Bearer " + t; return h; }
+    async function ghGetContents(path, cfg) { const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}?ref=${cfg.branch}`; const res = await fetch(url, { headers: ghHeaders() }); if (res.status === 404) return { status: 404 }; if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`); return res.json(); }
+    async function ghPutContents(path, base64Content, message, sha = null, cfg) { const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}`; const body = { message, content: base64Content, branch: cfg.branch }; if (sha) body.sha = sha; const res = await fetch(url, { method: "PUT", headers: { ...ghHeaders(), "Content-Type": "application/json" }, body: JSON.stringify(body) }); if (!res.ok) throw new Error(`PUT ${path} failed: ${res.status}`); return res.json(); }
+    async function uploadPDF(file, filename, message, cfg) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = async () => { try { const base64 = btoa(new Uint8Array(reader.result).reduce((data, byte) => data + String.fromCharCode(byte), '')); let sha = null; try { const existing = await ghGetContents(filename, cfg); if (existing.sha) sha = existing.sha; } catch(e) {} const res = await ghPutContents(filename, base64, message, sha, cfg); resolve(res); } catch (e) { reject(e); } }; reader.onerror = reject; reader.readAsArrayBuffer(file); }); }
     function toBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
     function fromBase64(b64) { return decodeURIComponent(escape(atob(b64))); }
 
-    // Load documents from the configured repo (Hunter9201/I)
-    async function loadDocuments() {
-        try {
-            const cfg = currentCfg();
-            const fullPath = getFullJsonPath(cfg);
-            const got = await ghGetContents(fullPath, cfg);
-            if (got.status === 404) return { arr: [], sha: null };
-            const arr = JSON.parse(fromBase64(got.content));
-            if (!Array.isArray(arr)) return { arr: [], sha: got.sha };
-            return { arr, sha: got.sha };
-        } catch (err) {
-            console.error(err);
-            return { arr: [], sha: null };
-        }
-    }
+    async function loadDocuments() { try { const cfg = currentCfg(); const fullPath = getFullJsonPath(cfg); const got = await ghGetContents(fullPath, cfg); if (got.status === 404) return { arr: [], sha: null }; const arr = JSON.parse(fromBase64(got.content)); if (!Array.isArray(arr)) return { arr: [], sha: got.sha }; return { arr, sha: got.sha }; } catch (err) { console.error(err); return { arr: [], sha: null }; } }
 
-    async function refreshDocumentsList() {
-        try {
-            const { arr } = await loadDocuments();
-            allDocuments = arr;
-            renderDocumentList(arr);
-            docCountSpan.innerText = arr.length;
-            checkJsonUrl();
-        } catch (e) {
-            documentsList.innerHTML = `<div class="status-msg"><i class="fas fa-exclamation-triangle"></i> Error: ${e.message}</div>`;
-        }
-    }
+    async function refreshDocumentsList() { try { const { arr } = await loadDocuments(); allDocuments = arr; renderDocumentList(arr); docCountSpan.innerText = arr.length; checkJsonUrl(); } catch (e) { documentsList.innerHTML = `<div class="status-msg"><i class="fas fa-exclamation-triangle"></i> Error: ${e.message}</div>`; } }
 
     function renderDocumentList(docs) {
-        if (!docs.length) {
-            documentsList.innerHTML = `<div class="status-msg">📭 No pleadings indexed yet. Upload PDFs → they will be added to Hunter9201/I and listed here.</div>`;
-            return;
-        }
+        if (!docs.length) { documentsList.innerHTML = `<div class="status-msg">📭 No pleadings indexed yet. Upload PDFs → they will be added to Hunter9201/I and listed here.</div>`; return; }
         documentsList.innerHTML = '';
         docs.forEach(doc => {
-            const div = document.createElement('div');
-            div.className = 'doc-item';
+            const div = document.createElement('div'); div.className = 'doc-item';
             div.innerHTML = `
-                <div class="flex-between">
-                    <strong><i class="fas fa-file-pdf"></i> ${escapeHtml(doc.title)}</strong>
-                    <span class="badge">${doc.documentType || 'Pleading'}</span>
-                </div>
-                <div style="font-size:0.75rem; color:#475569; margin: 6px 0;">
-                    ${doc.caseNumber ? `📁 Case: ${escapeHtml(doc.caseNumber)}` : ''} 
-                    ${doc.parties ? `· ⚖️ ${escapeHtml(doc.parties)}` : ''}
-                    ${doc.court ? `· 🏛️ ${escapeHtml(doc.court)}` : ''}
-                </div>
+                <div class="flex-between"><strong><i class="fas fa-file-pdf"></i> ${escapeHtml(doc.title)}</strong><span class="badge">${doc.documentType || 'Pleading'}</span></div>
+                <div style="font-size:0.75rem; color:#475569; margin: 6px 0;">${doc.caseNumber ? `📁 Case: ${escapeHtml(doc.caseNumber)}` : ''} ${doc.parties ? `· ⚖️ ${escapeHtml(doc.parties)}` : ''} ${doc.court ? `· 🏛️ ${escapeHtml(doc.court)}` : ''}</div>
+                <div class="legal-detail-row"><i class="fas fa-balance-scale"></i> <strong>Procedure:</strong> ${escapeHtml(doc.procedure || '—')}</div>
+                <div class="legal-detail-row"><i class="fas fa-gavel"></i> <strong>Locus Classicus:</strong> ${escapeHtml(doc.locusClassicus || '—')}</div>
+                <div class="legal-detail-row"><i class="fas fa-coins"></i> <strong>Filing Fees:</strong> ${escapeHtml(doc.filingFees || '—')}</div>
                 <div style="font-size:0.7rem; margin-top:6px;">📅 ${doc.documentDate || '—'} · 📄 ${doc.filename} · ${doc.size}MB</div>
-                <div class="flex-between" style="margin-top: 10px;">
-                    <button class="edit-doc btn-outline" data-id="${doc.id}" style="padding:4px 12px;">✏️ Edit</button>
-                    <button class="delete-doc btn-danger" data-id="${doc.id}" style="padding:4px 12px;">🗑️ Delete</button>
-                </div>
+                <div class="flex-between" style="margin-top: 10px;"><button class="edit-doc btn-outline" data-id="${doc.id}" style="padding:4px 12px;">✏️ Edit (full)</button><button class="delete-doc btn-danger" data-id="${doc.id}" style="padding:4px 12px;">🗑️ Delete</button></div>
             `;
             documentsList.appendChild(div);
         });
-        document.querySelectorAll('.edit-doc').forEach(btn => {
-            btn.addEventListener('click', (e) => { e.stopPropagation(); startEdit(parseInt(btn.dataset.id)); });
-        });
-        document.querySelectorAll('.delete-doc').forEach(btn => {
-            btn.addEventListener('click', async (e) => { e.stopPropagation(); await deleteDocument(parseInt(btn.dataset.id)); });
-        });
+        document.querySelectorAll('.edit-doc').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(parseInt(btn.dataset.id)); }); });
+        document.querySelectorAll('.delete-doc').forEach(btn => { btn.addEventListener('click', async (e) => { e.stopPropagation(); await deleteDocument(parseInt(btn.dataset.id)); }); });
     }
 
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-    async function deleteDocument(id) {
-        if (!confirm(`Delete document ID ${id}? This removes from JSON index only. PDF stays in repo.`)) return;
-        try {
-            const cfg = currentCfg();
-            const { arr, sha } = await loadDocuments();
-            const newArr = arr.filter(d => d.id !== id);
-            const fullPath = getFullJsonPath(cfg);
-            await ghPutContents(fullPath, toBase64(JSON.stringify(newArr, null, 2)), `Delete document ID ${id}`, sha, cfg);
-            await refreshDocumentsList();
-            uploadStatus.innerText = `✅ Deleted document ID ${id}`;
-            if (getAutoPublish()) await triggerPagesDeploy("Document deleted");
-        } catch (err) {
-            alert("Delete failed: " + err.message);
-        }
-    }
+    async function deleteDocument(id) { if (!confirm(`Delete document ID ${id}? Removes from JSON only.`)) return; try { const cfg = currentCfg(); const { arr, sha } = await loadDocuments(); const newArr = arr.filter(d => d.id !== id); const fullPath = getFullJsonPath(cfg); await ghPutContents(fullPath, toBase64(JSON.stringify(newArr, null, 2)), `Delete document ID ${id}`, sha, cfg); await refreshDocumentsList(); uploadStatus.innerText = `✅ Deleted document ID ${id}`; if (getAutoPublish()) await triggerPagesDeploy("Document deleted"); } catch (err) { alert("Delete failed: " + err.message); } }
 
-    async function startEdit(id) {
+    function openEditModal(id) {
         const doc = allDocuments.find(d => d.id === id);
         if (!doc) return;
-        editingDocId = id;
-        const newTitle = prompt("Edit title:", doc.title);
-        if (!newTitle) return;
-        const newType = prompt("Document type (Notice of Motion, Affidavit, etc.):", doc.documentType || "Notice of Motion");
-        const newCase = prompt("Case number:", doc.caseNumber || "");
-        const newParties = prompt("Parties:", doc.parties || "");
-        const newCourt = prompt("Court:", doc.court || "");
-        const newDate = prompt("Document date (YYYY-MM-DD):", doc.documentDate || "");
-        const newDesc = prompt("Description:", doc.description || "");
-        const updatedDoc = { ...doc, title: newTitle, documentType: newType, caseNumber: newCase, parties: newParties, court: newCourt, documentDate: newDate, description: newDesc, updated: true };
+        editDocId.value = id;
+        editTitle.value = doc.title || '';
+        editType.innerHTML = DOCUMENT_TYPES.map(t => `<option value="${t}" ${doc.documentType===t ? 'selected' : ''}>${t}</option>`).join('');
+        editCaseNumber.value = doc.caseNumber || '';
+        editParties.value = doc.parties || '';
+        editCourt.value = doc.court || '';
+        editDocumentDate.value = doc.documentDate || '';
+        editDescription.value = doc.description || '';
+        editProcedure.value = doc.procedure || '';
+        editLocusClassicus.value = doc.locusClassicus || '';
+        editFilingFees.value = doc.filingFees || '';
+        editDocModal.style.display = 'flex';
+    }
+
+    async function saveEditedDocument() {
+        const id = parseInt(editDocId.value);
+        const updatedDoc = {
+            id: id,
+            title: editTitle.value.trim(),
+            documentType: editType.value,
+            caseNumber: editCaseNumber.value.trim(),
+            parties: editParties.value.trim(),
+            court: editCourt.value.trim(),
+            documentDate: editDocumentDate.value,
+            description: editDescription.value.trim(),
+            procedure: editProcedure.value.trim(),
+            locusClassicus: editLocusClassicus.value.trim(),
+            filingFees: editFilingFees.value.trim(),
+            // preserve other fields from existing
+        };
         try {
             const cfg = currentCfg();
             const { arr, sha } = await loadDocuments();
             const idx = arr.findIndex(d => d.id === id);
             if (idx !== -1) {
-                arr[idx] = updatedDoc;
+                const existing = arr[idx];
+                updatedDoc.filename = existing.filename;
+                updatedDoc.size = existing.size;
+                updatedDoc.pages = existing.pages;
+                updatedDoc.year = existing.year;
+                updatedDoc.date = existing.date;
+                updatedDoc.category = existing.category;
+                updatedDoc.url = existing.url;
+                arr[idx] = { ...existing, ...updatedDoc };
                 const fullPath = getFullJsonPath(cfg);
                 await ghPutContents(fullPath, toBase64(JSON.stringify(arr, null, 2)), `Update document: ${updatedDoc.title}`, sha, cfg);
                 await refreshDocumentsList();
-                uploadStatus.innerText = `Document ${id} updated.`;
+                uploadStatus.innerText = `Document ${id} updated with legal details.`;
                 if (getAutoPublish()) await triggerPagesDeploy("Document update");
+                editDocModal.style.display = 'none';
             }
         } catch (err) { alert("Edit error: " + err.message); }
-        editingDocId = null;
     }
 
     function handleFiles(files) {
         const fileArray = Array.from(files).slice(0, 8);
-        selectedFiles = fileArray.map(file => ({
-            file,
-            metadata: {
-                title: file.name.replace(/\.pdf$/i, ''),
-                documentType: "Notice of Motion",
-                caseNumber: "",
-                parties: "",
-                court: "",
-                documentDate: new Date().toISOString().slice(0,10),
-                description: `Pleading document: ${file.name}`
-            }
-        }));
+        selectedFiles = fileArray.map(file => ({ file, metadata: { title: file.name.replace(/\.pdf$/i, ''), documentType: "Notice of Motion", caseNumber: "", parties: "", court: "", documentDate: new Date().toISOString().slice(0,10), description: `Pleading document: ${file.name}`, procedure: "", locusClassicus: "", filingFees: "" } }));
         updateMetadataUI();
         uploadCountBadge.innerText = `${selectedFiles.length} file(s)`;
         metadataContainer.style.display = 'block';
@@ -457,72 +396,37 @@
         fileMetaList.innerHTML = '';
         selectedFiles.forEach((item, idx) => {
             const meta = item.metadata;
-            const div = document.createElement('div');
-            div.className = 'file-card';
+            const div = document.createElement('div'); div.className = 'file-card';
             div.innerHTML = `
-                <div class="file-title">
-                    <span><i class="fas fa-file-pdf"></i> ${escapeHtml(item.file.name)}</span>
-                    <span class="badge">${(item.file.size/1024/1024).toFixed(2)} MB</span>
-                </div>
-                <div class="meta-grid">
-                    <div><label>Title *</label><input type="text" class="meta-title" data-idx="${idx}" value="${escapeHtml(meta.title)}"></div>
-                    <div><label>Document Type</label><select class="meta-type" data-idx="${idx}">${DOCUMENT_TYPES.map(t => `<option value="${t}" ${meta.documentType===t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
-                    <div><label>Case/Cause Number</label><input class="meta-case" data-idx="${idx}" value="${escapeHtml(meta.caseNumber)}"></div>
-                    <div><label>Parties</label><input class="meta-parties" data-idx="${idx}" value="${escapeHtml(meta.parties)}"></div>
-                    <div><label>Court</label><input class="meta-court" data-idx="${idx}" value="${escapeHtml(meta.court)}"></div>
-                    <div><label>Document Date</label><input type="date" class="meta-date" data-idx="${idx}" value="${meta.documentDate}"></div>
-                </div>
+                <div class="file-title"><span><i class="fas fa-file-pdf"></i> ${escapeHtml(item.file.name)}</span><span class="badge">${(item.file.size/1024/1024).toFixed(2)} MB</span></div>
+                <div class="meta-grid"><div><label>Title *</label><input class="meta-title" data-idx="${idx}" value="${escapeHtml(meta.title)}"></div>
+                <div><label>Document Type</label><select class="meta-type" data-idx="${idx}">${DOCUMENT_TYPES.map(t => `<option value="${t}" ${meta.documentType===t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+                <div><label>Case/Cause Number</label><input class="meta-case" data-idx="${idx}" value="${escapeHtml(meta.caseNumber)}"></div>
+                <div><label>Parties</label><input class="meta-parties" data-idx="${idx}" value="${escapeHtml(meta.parties)}"></div>
+                <div><label>Court</label><input class="meta-court" data-idx="${idx}" value="${escapeHtml(meta.court)}"></div>
+                <div><label>Document Date</label><input type="date" class="meta-date" data-idx="${idx}" value="${meta.documentDate}"></div></div>
                 <div><label>Description</label><textarea class="meta-desc" data-idx="${idx}" rows="2">${escapeHtml(meta.description)}</textarea></div>
+                <div class="meta-grid"><div><label>📜 Procedure (legal steps)</label><textarea class="meta-procedure" data-idx="${idx}" rows="2" placeholder="e.g., File at registry, serve opposing party...">${escapeHtml(meta.procedure)}</textarea></div>
+                <div><label>⚖️ Locus Classicus (case law)</label><input class="meta-locus" data-idx="${idx}" value="${escapeHtml(meta.locusClassicus)}" placeholder="e.g., Halsbury’s Laws"></div>
+                <div><label>💰 Filing Fees</label><input class="meta-fees" data-idx="${idx}" value="${escapeHtml(meta.filingFees)}" placeholder="KES 5,000"></div></div>
             `;
             fileMetaList.appendChild(div);
         });
-        document.querySelectorAll('.meta-title, .meta-case, .meta-parties, .meta-court, .meta-date, .meta-desc').forEach(el => {
-            el.addEventListener('input', function() {
-                const idx = parseInt(this.dataset.idx);
-                if (selectedFiles[idx]) {
-                    if (this.classList.contains('meta-title')) selectedFiles[idx].metadata.title = this.value;
-                    else if (this.classList.contains('meta-case')) selectedFiles[idx].metadata.caseNumber = this.value;
-                    else if (this.classList.contains('meta-parties')) selectedFiles[idx].metadata.parties = this.value;
-                    else if (this.classList.contains('meta-court')) selectedFiles[idx].metadata.court = this.value;
-                    else if (this.classList.contains('meta-date')) selectedFiles[idx].metadata.documentDate = this.value;
-                    else if (this.classList.contains('meta-desc')) selectedFiles[idx].metadata.description = this.value;
-                }
-            });
-        });
-        document.querySelectorAll('.meta-type').forEach(sel => {
-            sel.addEventListener('change', function() {
-                const idx = parseInt(this.dataset.idx);
-                if (selectedFiles[idx]) selectedFiles[idx].metadata.documentType = this.value;
-            });
-        });
+        const attachEvent = (cls, prop) => { document.querySelectorAll(cls).forEach(el => { el.addEventListener('input', function() { const idx = parseInt(this.dataset.idx); if (selectedFiles[idx]) selectedFiles[idx].metadata[prop] = this.value; }); }); };
+        attachEvent('.meta-title', 'title'); attachEvent('.meta-case', 'caseNumber'); attachEvent('.meta-parties', 'parties'); attachEvent('.meta-court', 'court'); attachEvent('.meta-date', 'documentDate'); attachEvent('.meta-desc', 'description'); attachEvent('.meta-procedure', 'procedure'); attachEvent('.meta-locus', 'locusClassicus'); attachEvent('.meta-fees', 'filingFees');
+        document.querySelectorAll('.meta-type').forEach(sel => { sel.addEventListener('change', function() { const idx = parseInt(this.dataset.idx); if (selectedFiles[idx]) selectedFiles[idx].metadata.documentType = this.value; }); });
     }
 
-    resetUploadBtn.addEventListener('click', () => {
-        selectedFiles = [];
-        metadataContainer.style.display = 'none';
-        uploadCountBadge.innerText = '0 files';
-        uploadStatus.innerText = '';
-    });
+    resetUploadBtn.addEventListener('click', () => { selectedFiles = []; metadataContainer.style.display = 'none'; uploadCountBadge.innerText = '0 files'; uploadStatus.innerText = ''; });
+    uploadArea.addEventListener('click', () => fileInput.click()); fileInput.addEventListener('change', (e) => { if(e.target.files.length) handleFiles(e.target.files); fileInput.value = ''; });
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.background = '#eef2ff'; }); uploadArea.addEventListener('dragleave', () => { uploadArea.style.background = '#faf9f6'; }); uploadArea.addEventListener('drop', (e) => { e.preventDefault(); uploadArea.style.background = '#faf9f6'; if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
 
-    uploadArea.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => { if(e.target.files.length) handleFiles(e.target.files); fileInput.value = ''; });
-    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.background = '#eef2ff'; });
-    uploadArea.addEventListener('dragleave', () => { uploadArea.style.background = '#faf9f6'; });
-    uploadArea.addEventListener('drop', (e) => { e.preventDefault(); uploadArea.style.background = '#faf9f6'; if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
-
-    async function ensureNoJekyll(cfg) {
-        const nojekyllPath = cfg.pagesFolder + ".nojekyll";
-        try {
-            const existing = await ghGetContents(nojekyllPath, cfg);
-            if (existing.status !== 404) return;
-            await ghPutContents(nojekyllPath, toBase64(""), "Create .nojekyll for GitHub Pages", null, cfg);
-        } catch(e) { console.warn("nojekyll", e); }
-    }
+    async function ensureNoJekyll(cfg) { const nojekyllPath = cfg.pagesFolder + ".nojekyll"; try { const existing = await ghGetContents(nojekyllPath, cfg); if (existing.status !== 404) return; await ghPutContents(nojekyllPath, toBase64(""), "Create .nojekyll for GitHub Pages", null, cfg); } catch(e) { console.warn("nojekyll", e); } }
 
     publishBtn.addEventListener('click', async () => {
-        if (!getToken()) { alert("Please set GitHub token first (repo scope)."); return; }
+        if (!getToken()) { alert("Set GitHub token first."); return; }
         if (selectedFiles.length === 0) { alert("Select PDF files."); return; }
-        if (selectedFiles.some(f => !f.metadata.title.trim())) { alert("Please fill document titles for all files."); return; }
+        if (selectedFiles.some(f => !f.metadata.title.trim())) { alert("Please fill document titles."); return; }
         uploadStatus.innerText = "Uploading to GitHub (Hunter9201/I)...";
         const cfg = currentCfg();
         try {
@@ -531,128 +435,43 @@
             let nextId = arr.length ? Math.max(...arr.map(d => d.id)) + 1 : 1;
             const newDocs = [];
             for (let i = 0; i < selectedFiles.length; i++) {
-                const item = selectedFiles[i];
-                const file = item.file;
-                const meta = item.metadata;
+                const item = selectedFiles[i]; const file = item.file; const meta = item.metadata;
                 const filename = file.name;
                 await uploadPDF(file, filename, `Add pleading: ${meta.title}`, cfg);
                 const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-                const doc = {
-                    id: nextId++,
-                    title: meta.title,
-                    description: meta.description || `${meta.documentType} document`,
-                    filename: filename,
-                    documentType: meta.documentType,
-                    caseNumber: meta.caseNumber,
-                    parties: meta.parties,
-                    court: meta.court,
-                    documentDate: meta.documentDate,
-                    size: sizeMB,
-                    pages: "?",
-                    year: new Date().getFullYear(),
-                    date: new Date().toISOString(),
-                    category: mapDocTypeToCategory(meta.documentType),
-                    url: `https://${cfg.owner}.github.io/${cfg.repo}/${encodeURIComponent(filename)}`
-                };
+                const doc = { id: nextId++, title: meta.title, description: meta.description || `${meta.documentType} document`, filename: filename, documentType: meta.documentType, caseNumber: meta.caseNumber, parties: meta.parties, court: meta.court, documentDate: meta.documentDate, size: sizeMB, pages: "?", year: new Date().getFullYear(), date: new Date().toISOString(), category: mapDocTypeToCategory(meta.documentType), url: `https://${cfg.owner}.github.io/${cfg.repo}/${encodeURIComponent(filename)}`, procedure: meta.procedure || "", locusClassicus: meta.locusClassicus || "", filingFees: meta.filingFees || "" };
                 newDocs.push(doc);
                 uploadStatus.innerText = `Uploaded ${i+1}/${selectedFiles.length}: ${meta.title}`;
             }
             arr.push(...newDocs);
             const fullPath = getFullJsonPath(cfg);
             await ghPutContents(fullPath, toBase64(JSON.stringify(arr, null, 2)), `Add ${newDocs.length} pleadings`, sha, cfg);
-            uploadStatus.innerText = `✅ Success! ${newDocs.length} documents saved to ${fullPath} in Hunter9201/I.`;
+            uploadStatus.innerText = `✅ Success! ${newDocs.length} documents saved.`;
             await refreshDocumentsList();
             if (getAutoPublish()) await triggerPagesDeploy("New pleadings uploaded");
             resetUploadBtn.click();
-        } catch (err) {
-            uploadStatus.innerText = `❌ Error: ${err.message}`;
-            alert(err.message);
-        }
+        } catch (err) { uploadStatus.innerText = `❌ Error: ${err.message}`; alert(err.message); }
     });
 
-    function mapDocTypeToCategory(type) {
-        if (type.includes("Affidavit")) return "evidence";
-        if (type.includes("Motion") || type.includes("Summons")) return "procedure";
-        if (type.includes("Petition")) return "civil";
-        if (type.includes("Eviction")) return "property";
-        return "other";
-    }
+    function mapDocTypeToCategory(type) { if (type.includes("Affidavit")) return "evidence"; if (type.includes("Motion") || type.includes("Summons")) return "procedure"; if (type.includes("Petition")) return "civil"; if (type.includes("Eviction")) return "property"; return "other"; }
 
-    async function triggerPagesDeploy(msg) {
-        try {
-            const cfg = currentCfg();
-            const timestampPath = cfg.pagesFolder + ".pages-trigger";
-            let sha = null;
-            try { const existing = await ghGetContents(timestampPath, cfg); if (existing.sha) sha = existing.sha; } catch(e) {}
-            await ghPutContents(timestampPath, toBase64(JSON.stringify({ last: new Date().toISOString(), msg })), `🚀 ${msg}`, sha, cfg);
-            pagesStatusMsg.innerText = "✅ Deployment triggered (GitHub Pages will rebuild).";
-            setTimeout(() => checkJsonUrl(), 5000);
-        } catch(e) { pagesStatusMsg.innerText = "⚠️ Deploy trigger warning: " + e.message; }
-    }
+    async function triggerPagesDeploy(msg) { try { const cfg = currentCfg(); const timestampPath = cfg.pagesFolder + ".pages-trigger"; let sha = null; try { const existing = await ghGetContents(timestampPath, cfg); if (existing.sha) sha = existing.sha; } catch(e) {} await ghPutContents(timestampPath, toBase64(JSON.stringify({ last: new Date().toISOString(), msg })), `🚀 ${msg}`, sha, cfg); pagesStatusMsg.innerText = "✅ Deployment triggered."; setTimeout(() => checkJsonUrl(), 5000); } catch(e) { pagesStatusMsg.innerText = "⚠️ Deploy trigger warning: " + e.message; } }
     triggerPagesBtn.addEventListener('click', async () => { if(getToken()) await triggerPagesDeploy("Manual rebuild"); else alert("Set token first"); });
+    async function checkJsonUrl() { const cfg = currentCfg(); let baseUrl = cfg.customDomain ? `https://${cfg.customDomain}` : `https://${cfg.owner}.github.io/${cfg.repo}`; baseUrl = baseUrl.replace(/\/$/, ''); const jsonFileName = cfg.documentsPath.split('/').pop(); const jsonPath = cfg.pagesFolder + jsonFileName; const fullUrl = `${baseUrl}/${jsonPath}`; try { const res = await fetch(fullUrl, { method: 'HEAD', cache: 'no-cache' }); if (res.ok) jsonUrlCheck.innerHTML = `<span class="url-success"><i class="fas fa-check-circle"></i> JSON live at <a href="${fullUrl}" target="_blank">${fullUrl}</a></span>`; else jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-exclamation-triangle"></i> JSON not yet available (status ${res.status})</span>`; } catch(e) { jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-link"></i> Cannot reach ${fullUrl}</span>`; } }
 
-    async function checkJsonUrl() {
-        const cfg = currentCfg();
-        let baseUrl = "";
-        if (cfg.customDomain) baseUrl = `https://${cfg.customDomain}`;
-        else baseUrl = `https://${cfg.owner}.github.io/${cfg.repo}`;
-        baseUrl = baseUrl.replace(/\/$/, '');
-        const jsonFileName = cfg.documentsPath.split('/').pop();
-        let jsonPath = cfg.pagesFolder + jsonFileName;
-        const fullUrl = `${baseUrl}/${jsonPath}`;
-        try {
-            const res = await fetch(fullUrl, { method: 'HEAD', cache: 'no-cache' });
-            if (res.ok) jsonUrlCheck.innerHTML = `<span class="url-success"><i class="fas fa-check-circle"></i> JSON is live at <a href="${fullUrl}" target="_blank">${fullUrl}</a></span>`;
-            else jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-exclamation-triangle"></i> JSON not yet available (status ${res.status}). Pages may take 1-2 min.</span>`;
-        } catch(e) { jsonUrlCheck.innerHTML = `<span class="url-fail"><i class="fas fa-link"></i> Cannot reach ${fullUrl} - check domain or wait for deploy.</span>`; }
-    }
-
-    exportJsonBtn.addEventListener('click', async () => {
-        const { arr } = await loadDocuments();
-        const blob = new Blob([JSON.stringify(arr, null, 2)], {type: "application/json"});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "pleadings.json"; a.click(); URL.revokeObjectURL(a.href);
-    });
-    importJsonBtn.addEventListener('click', () => importFileInput.click());
-    importFileInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0]; if(!file) return;
-        if(confirm("Replace pleadings.json with imported file?")) {
-            const text = await file.text(); const data = JSON.parse(text);
-            if(!Array.isArray(data)) throw new Error("Invalid array");
-            const cfg = currentCfg(); const { sha } = await loadDocuments();
-            const fullPath = getFullJsonPath(cfg);
-            await ghPutContents(fullPath, toBase64(JSON.stringify(data, null, 2)), "Import pleadings.json", sha, cfg);
-            await refreshDocumentsList();
-            alert("Imported.");
-            if (getAutoPublish()) await triggerPagesDeploy("Import");
-        }
-        importFileInput.value = '';
-    });
-
+    exportJsonBtn.addEventListener('click', async () => { const { arr } = await loadDocuments(); const blob = new Blob([JSON.stringify(arr, null, 2)], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "pleadings.json"; a.click(); URL.revokeObjectURL(a.href); });
+    importJsonBtn.addEventListener('click', () => importFileInput.click()); importFileInput.addEventListener('change', async (e) => { const file = e.target.files[0]; if(!file) return; if(confirm("Replace pleadings.json?")) { const text = await file.text(); const data = JSON.parse(text); if(!Array.isArray(data)) throw new Error("Invalid array"); const cfg = currentCfg(); const { sha } = await loadDocuments(); const fullPath = getFullJsonPath(cfg); await ghPutContents(fullPath, toBase64(JSON.stringify(data, null, 2)), "Import pleadings.json", sha, cfg); await refreshDocumentsList(); alert("Imported."); if (getAutoPublish()) await triggerPagesDeploy("Import"); } importFileInput.value = ''; });
     refreshListBtn.addEventListener('click', refreshDocumentsList);
     [cfgOwner, cfgRepo, cfgBranch, cfgDocuments, cfgPagesFolder, cfgCustomDomain].forEach(el => el.addEventListener('change', saveConfig));
 
-    // Token modal handlers
-    function showModal() { tokenModal.style.display = 'flex'; }
-    function hideModal() { tokenModal.style.display = 'none'; }
-    showTokenModalBtn.onclick = showModal;
-    cancelTokenBtn.onclick = hideModal;
-    saveTokenBtn.onclick = () => { const tok = tokenInput.value.trim(); if(tok) { setToken(tok); hideModal(); refreshDocumentsList(); } else alert("Enter token"); };
-    clearTokenBtn.onclick = () => { clearTokenStorage(); alert("Token cleared"); refreshDocumentsList(); };
-    window.onclick = (e) => { if(e.target === tokenModal) hideModal(); };
+    function showModal() { tokenModal.style.display = 'flex'; } function hideModal() { tokenModal.style.display = 'none'; }
+    showTokenModalBtn.onclick = showModal; cancelTokenBtn.onclick = hideModal; saveTokenBtn.onclick = () => { const tok = tokenInput.value.trim(); if(tok) { setToken(tok); hideModal(); refreshDocumentsList(); } else alert("Enter token"); }; clearTokenBtn.onclick = () => { clearTokenStorage(); alert("Token cleared"); refreshDocumentsList(); };
+    window.onclick = (e) => { if(e.target === tokenModal) hideModal(); if(e.target === editDocModal) editDocModal.style.display = 'none'; };
+    closeEditModalBtn.onclick = () => editDocModal.style.display = 'none'; saveEditDocBtn.onclick = saveEditedDocument;
 
-    async function checkPagesStatus() {
-        try {
-            const cfg = currentCfg();
-            const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/pages`, { headers: ghHeaders() });
-            if(res.ok) pagesStatusMsg.innerHTML = "✅ GitHub Pages enabled (Hunter9201/I)";
-            else pagesStatusMsg.innerHTML = "⚠️ Pages not enabled or no permission";
-        } catch(e) { pagesStatusMsg.innerHTML = "Could not verify Pages"; }
-    }
+    async function checkPagesStatus() { try { const cfg = currentCfg(); const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/pages`, { headers: ghHeaders() }); if(res.ok) pagesStatusMsg.innerHTML = "✅ GitHub Pages enabled (Hunter9201/I)"; else pagesStatusMsg.innerHTML = "⚠️ Pages not enabled"; } catch(e) { pagesStatusMsg.innerHTML = "Could not verify Pages"; } }
     setInterval(checkPagesStatus, 60000);
-    loadConfig();
-    updateTokenUI();
-    refreshDocumentsList();
-    if(getToken()) { checkPagesStatus(); checkJsonUrl(); }
+    loadConfig(); updateTokenUI(); refreshDocumentsList(); if(getToken()) { checkPagesStatus(); checkJsonUrl(); }
 </script>
 </body>
 </html>
